@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import AppHeader from '@/components/AppHeader.vue'
 import CategoryToggle from '@/components/CategoryToggle.vue'
 import RaceList from '@/components/RaceList.vue'
 import {
@@ -9,18 +10,46 @@ import {
   VISIBLE_RACE_COUNT,
 } from '@/constants/raceTiming'
 import { useRacesStore } from '@/stores/racesStore'
-import { formatLastUpdated, getNowInSeconds } from '@/utils/time'
+import {
+  applyThemeMode,
+  getStoredThemePreference,
+  resolveThemeMode,
+  setStoredThemePreference,
+} from '@/utils/themeStorage'
+import { formatLastUpdated, getNowInSeconds, nextThemeMode } from '@/utils/time'
+import type { ThemeMode } from '@/types/race'
 
 const racesStore = useRacesStore()
 
 const nowSeconds = ref(getNowInSeconds())
+const resolvedTheme = ref<ThemeMode>('light')
+const storedThemePreference = ref<ThemeMode | null>(getStoredThemePreference())
 const lastRefillAttemptAt = ref(0)
 
 let countdownIntervalId: ReturnType<typeof setInterval> | undefined
 let refreshIntervalId: ReturnType<typeof setInterval> | undefined
+let themeMediaQuery: MediaQueryList | undefined
 
+const isFollowingSystem = computed(() => storedThemePreference.value === null)
 const lastUpdatedLabel = computed(() => formatLastUpdated(racesStore.lastUpdatedAt))
 const visibleRaces = computed(() => racesStore.getProcessedRaces(nowSeconds.value))
+
+function syncResolvedTheme(prefersDark = themeMediaQuery?.matches ?? false) {
+  resolvedTheme.value = resolveThemeMode(storedThemePreference.value, prefersDark)
+  applyThemeMode(resolvedTheme.value)
+}
+
+function handleThemeToggle() {
+  storedThemePreference.value = nextThemeMode(resolvedTheme.value)
+  setStoredThemePreference(storedThemePreference.value)
+  syncResolvedTheme()
+}
+
+function handleSystemThemeChange(event: MediaQueryListEvent) {
+  if (storedThemePreference.value === null) {
+    syncResolvedTheme(event.matches)
+  }
+}
 
 function maybeRefillVisibleRaces() {
   const shouldRefill = visibleRaces.value.length < VISIBLE_RACE_COUNT
@@ -37,6 +66,10 @@ function maybeRefillVisibleRaces() {
 watch(nowSeconds, maybeRefillVisibleRaces)
 
 onMounted(async () => {
+  themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+  syncResolvedTheme(themeMediaQuery.matches)
+  themeMediaQuery.addEventListener('change', handleSystemThemeChange)
+
   countdownIntervalId = setInterval(() => {
     nowSeconds.value = getNowInSeconds()
   }, COUNTDOWN_INTERVAL_MS)
@@ -57,6 +90,8 @@ onUnmounted(() => {
   if (refreshIntervalId) {
     clearInterval(refreshIntervalId)
   }
+
+  themeMediaQuery?.removeEventListener('change', handleSystemThemeChange)
 })
 </script>
 
@@ -81,31 +116,12 @@ onUnmounted(() => {
       <div
         class="flex w-full flex-col rounded-[32px] border border-app-light-border/75 bg-app-light-elevated/65 shadow-glass backdrop-blur-glass dark:border-app-dark-border dark:bg-app-dark-card/60 dark:shadow-glass-dark"
       >
-        <header
-          class="flex flex-col gap-4 border-b border-app-light-border/70 px-5 py-6 sm:px-7 lg:px-8 lg:py-8 dark:border-app-dark-border"
-        >
-          <span
-            class="inline-flex w-fit rounded-full bg-app-light-soft px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-app-light-primary dark:bg-app-dark-surface/85 dark:text-app-dark-accent"
-          >
-            Entain Next To Go
-          </span>
-          <div class="space-y-2">
-            <h1
-              class="font-display text-3xl font-semibold tracking-tight text-app-light-text sm:text-4xl dark:text-app-dark-text"
-            >
-              Next to Go races, ordered and ready to move.
-            </h1>
-            <p class="max-w-xl text-sm leading-6 text-app-light-body dark:text-app-dark-muted">
-              Five upcoming races stay in view when available, update every second, and disappear
-              one minute after their advertised start.
-            </p>
-          </div>
-          <p
-            class="text-xs font-medium uppercase tracking-[0.2em] text-app-light-muted dark:text-app-dark-muted"
-          >
-            Last updated {{ lastUpdatedLabel }}
-          </p>
-        </header>
+        <AppHeader
+          :is-following-system="isFollowingSystem"
+          :last-updated-label="lastUpdatedLabel"
+          :theme="resolvedTheme"
+          @toggle-theme="handleThemeToggle"
+        />
 
         <section
           class="border-b border-app-light-border/70 px-5 py-5 sm:px-7 lg:px-8 dark:border-app-dark-border"
