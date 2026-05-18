@@ -5,18 +5,37 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "eslint . --fix",
+    "format": "prettier --write .",
+    "test:unit": "vitest run",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "pinia": "^3.0.4",
     "vue": "^3.5.34"
   },
   "devDependencies": {
-    "@types/node": "^24.12.3",
+    "@types/node": "^24.12.4",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
     "@vitejs/plugin-vue": "^6.0.6",
+    "@vitest/coverage-v8": "^4.1.6",
+    "@vue/test-utils": "^2.4.10",
     "@vue/tsconfig": "^0.9.1",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^10.4.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-vue": "^10.9.1",
+    "jsdom": "^29.1.1",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.14",
+    "prettier": "^3.8.3",
+    "tailwindcss": "^3.4.18",
     "typescript": "~6.0.2",
     "vite": "^8.0.12",
+    "vitest": "^4.1.6",
+    "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.8"
   }
 }
