@@ -51,15 +51,26 @@ export function formatDistance(distance: number | null, distanceUnit: string | n
   return distanceUnit ? `${distance}${distanceUnit}` : `${distance}`
 }
 
-export function formatLastUpdated(timestamp: number | null) {
+export function formatLastUpdated(timestamp: number | null, currentTimestamp = Date.now()) {
   if (!timestamp) {
-    return 'Waiting for data'
+    return 'Waiting'
+  }
+
+  const differenceInSeconds = Math.max(0, Math.floor((currentTimestamp - timestamp) / 1000))
+
+  if (differenceInSeconds < 60) {
+    return `${differenceInSeconds}s ago`
+  }
+
+  const differenceInMinutes = Math.floor(differenceInSeconds / 60)
+
+  if (differenceInMinutes < 60) {
+    return `${differenceInMinutes}m ago`
   }
 
   return new Intl.DateTimeFormat('en-AU', {
     hour: 'numeric',
     minute: '2-digit',
-    second: '2-digit',
   }).format(timestamp)
 }
 

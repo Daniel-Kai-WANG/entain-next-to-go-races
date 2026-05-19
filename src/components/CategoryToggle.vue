@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CircleDot, Infinity, ListFilter, PawPrint, Route, Zap } from '@lucide/vue'
 import { ALL_FILTER_ID, FILTER_OPTIONS } from '@/constants/raceCategories'
 import type { CategoryFilterState, FilterOptionId, RaceCategoryId } from '@/types/race'
 
@@ -17,39 +18,58 @@ function isActive(optionId: FilterOptionId) {
 
   return props.filterState.selectedCategoryIds.includes(optionId as RaceCategoryId)
 }
+
+function getIcon(optionId: FilterOptionId) {
+  switch (optionId) {
+    case ALL_FILTER_ID:
+      return Infinity
+    case '9daef0d7-bf3c-4f50-921d-8e818c60fe61':
+      return PawPrint
+    case '161d9be2-e909-4326-8c2c-35ed71fb460b':
+      return Route
+    case '4a2788f8-e825-4d36-9894-efd4baf1cfae':
+      return Zap
+    default:
+      return CircleDot
+  }
+}
 </script>
 
 <template>
-  <div class="space-y-3">
-    <div class="flex items-center justify-between gap-3">
+  <section class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
       <div>
-        <h2
-          class="text-sm font-semibold uppercase tracking-[0.2em] text-app-light-muted dark:text-app-dark-muted"
-        >
-          Categories
+        <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-app-light-muted dark:text-app-dark-muted">
+          Category Filters
         </h2>
         <p class="mt-1 text-sm text-app-light-body dark:text-app-dark-muted">
-          Toggle race types without losing the five-upcoming-races rule.
+          All stays active unless you explicitly focus one or more race categories.
         </p>
+      </div>
+
+      <div class="hidden items-center gap-2 text-sm text-app-light-primaryStrong lg:flex dark:text-app-dark-accent">
+        <ListFilter class="h-4 w-4" />
+        <span>Sorted by time</span>
       </div>
     </div>
 
-    <div class="flex flex-wrap gap-3">
+    <div class="flex snap-x gap-3 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
       <button
         v-for="option in FILTER_OPTIONS"
         :key="option.id"
         type="button"
-        class="inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-light-primary dark:focus-visible:outline-app-dark-accent"
+        class="theme-transition glass-surface inline-flex min-h-12 shrink-0 snap-start items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-light-primary dark:focus-visible:outline-app-dark-accent"
         :class="
           isActive(option.id)
-            ? 'border-app-light-primary/30 bg-app-light-soft text-app-light-text shadow-panel dark:border-app-dark-accent/40 dark:bg-app-dark-surface/85 dark:text-app-dark-text'
-            : 'border-app-light-border/70 bg-white/55 text-app-light-body hover:border-app-light-primary/25 hover:bg-white/70 dark:border-app-dark-border dark:bg-app-dark-card/65 dark:text-app-dark-muted dark:hover:border-app-dark-accent/35 dark:hover:bg-app-dark-elevated/70'
+            ? 'border-app-light-primary bg-app-light-primary text-white shadow-glass dark:border-app-dark-accent dark:bg-app-dark-accent dark:text-app-dark-bg'
+            : 'text-app-light-primaryStrong hover:border-app-light-borderHover hover:bg-app-light-cardSelected dark:text-app-dark-text dark:hover:border-app-dark-accent/40 dark:hover:bg-app-dark-accentSoft'
         "
         :aria-pressed="isActive(option.id)"
         @click="emit('toggle', option.id)"
       >
-        {{ option.shortLabel }}
+        <component :is="getIcon(option.id)" class="h-4 w-4" />
+        <span>{{ option.shortLabel }}</span>
       </button>
     </div>
-  </div>
+  </section>
 </template>
