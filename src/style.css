@@ -21,11 +21,11 @@
   }
 
   html {
-    @apply bg-app-light-bg text-app-light-body dark:bg-app-dark-bg dark:text-app-dark-text;
+    @apply bg-app-light-bg text-app-light-body transition-colors duration-500 ease-smooth dark:bg-app-dark-bg dark:text-app-dark-text;
   }
 
   body {
-    @apply m-0 min-h-screen bg-app-light-bg bg-light-glow text-app-light-body transition-colors duration-300 dark:bg-app-dark-bg dark:bg-dark-glow dark:text-app-dark-text;
+    @apply m-0 min-h-screen bg-app-light-bg bg-light-glow text-app-light-body transition-[background-color,color] duration-500 ease-smooth dark:bg-app-dark-bg dark:bg-dark-glow dark:text-app-dark-text;
   }
 
   button {
@@ -38,5 +38,27 @@
 
   #app {
     @apply min-h-screen;
+  }
+}
+
+@layer components {
+  .glass-surface {
+    @apply border border-white/50 bg-glass-light shadow-glass backdrop-blur-glass transition-[background-color,border-color,box-shadow,color,opacity,backdrop-filter] duration-500 ease-smooth dark:border-white/10 dark:bg-glass-dark dark:shadow-glass-dark;
+  }
+
+  .glass-panel {
+    @apply glass-surface relative overflow-hidden;
+  }
+
+  .glass-panel::before {
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent content-[''] dark:via-white/25;
+  }
+
+  .glass-card-strong {
+    @apply glass-panel shadow-glass-strong;
+  }
+
+  .theme-transition {
+    @apply transition-[background-color,border-color,color,box-shadow,opacity,backdrop-filter,transform] duration-500 ease-smooth;
   }
 }
