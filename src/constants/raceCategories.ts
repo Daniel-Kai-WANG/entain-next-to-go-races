@@ -1,4 +1,7 @@
-import type { RaceCategoryId } from '@/types/race'
+import type { FilterOptionId, RaceCategoryId } from '@/types/race'
+
+export const ALL_FILTER_ID = 'all' as const
+export const CATEGORY_COUNT = 3
 
 export const RACE_CATEGORY_OPTIONS: Array<{
   id: RaceCategoryId
@@ -28,6 +31,11 @@ export const RACE_CATEGORY_OPTIONS: Array<{
 ]
 
 export const ALL_CATEGORY_IDS = RACE_CATEGORY_OPTIONS.map(({ id }) => id)
+export const FILTER_OPTIONS: Array<{
+  id: FilterOptionId
+  label: string
+  shortLabel: string
+}> = [{ id: ALL_FILTER_ID, label: 'All races', shortLabel: 'All Races' }, ...RACE_CATEGORY_OPTIONS]
 
 export function isRaceCategoryId(value: string | undefined): value is RaceCategoryId {
   return ALL_CATEGORY_IDS.includes(value as RaceCategoryId)
