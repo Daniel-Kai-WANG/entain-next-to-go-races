@@ -137,10 +137,10 @@ onUnmounted(() => {
         </div>
 
         <Transition
-          enter-active-class="theme-transition duration-500 ease-smooth"
+          enter-active-class="theme-transition duration-500"
           enter-from-class="translate-x-10 opacity-0"
           enter-to-class="translate-x-0 opacity-100"
-          leave-active-class="theme-transition duration-300 ease-smooth"
+          leave-active-class="theme-transition duration-300"
           leave-from-class="translate-x-0 opacity-100"
           leave-to-class="translate-x-6 opacity-0"
         >
@@ -154,10 +154,10 @@ onUnmounted(() => {
       </div>
 
       <Transition
-        enter-active-class="theme-transition duration-300 ease-smooth"
+        enter-active-class="theme-transition duration-300"
         enter-from-class="opacity-0"
         enter-to-class="opacity-100"
-        leave-active-class="theme-transition duration-200 ease-smooth"
+        leave-active-class="theme-transition duration-200"
         leave-from-class="opacity-100"
         leave-to-class="opacity-0"
       >

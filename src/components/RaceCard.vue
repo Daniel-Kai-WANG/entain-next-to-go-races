@@ -181,10 +181,10 @@ onUnmounted(() => {
     </div>
 
     <Transition
-      enter-active-class="theme-transition duration-300 ease-smooth"
+      enter-active-class="theme-transition duration-300"
       enter-from-class="max-h-0 translate-y-2 opacity-0"
       enter-to-class="max-h-96 translate-y-0 opacity-100"
-      leave-active-class="theme-transition duration-200 ease-smooth"
+      leave-active-class="theme-transition duration-200"
       leave-from-class="max-h-96 translate-y-0 opacity-100"
       leave-to-class="max-h-0 translate-y-2 opacity-0"
     >
