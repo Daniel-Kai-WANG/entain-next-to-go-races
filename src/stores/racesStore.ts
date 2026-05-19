@@ -1,18 +1,25 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { fetchNextRaces } from '@/api/racesApi'
-import { ALL_CATEGORY_IDS } from '@/constants/raceCategories'
-import { getVisibleRaces } from '@/utils/raceFilters'
-import type { RaceCategoryId, RaceSummary } from '@/types/race'
+import {
+  createAllCategoryFilterState,
+  getActiveCategoryIds,
+  getActiveFiltersLabel,
+  getVisibleRaces,
+  toggleCategoryFilter,
+} from '@/utils/raceFilters'
+import type { CategoryFilterState, FilterOptionId, RaceSummary } from '@/types/race'
 
 export const useRacesStore = defineStore('races', () => {
   const races = ref<RaceSummary[]>([])
-  const selectedCategories = ref<RaceCategoryId[]>([...ALL_CATEGORY_IDS])
+  const filterState = ref<CategoryFilterState>(createAllCategoryFilterState())
   const loading = ref(false)
   const error = ref<string | null>(null)
   const lastUpdatedAt = ref<number | null>(null)
 
   const hasRaces = computed(() => races.value.length > 0)
+  const activeCategoryIds = computed(() => getActiveCategoryIds(filterState.value))
+  const activeFiltersLabel = computed(() => getActiveFiltersLabel(filterState.value))
 
   async function fetchRaces() {
     loading.value = true
@@ -29,27 +36,25 @@ export const useRacesStore = defineStore('races', () => {
     }
   }
 
-  function toggleCategory(categoryId: RaceCategoryId) {
-    const nextSelection = selectedCategories.value.includes(categoryId)
-      ? selectedCategories.value.filter((id) => id !== categoryId)
-      : [...selectedCategories.value, categoryId]
-
-    selectedCategories.value = nextSelection.length === 0 ? [...ALL_CATEGORY_IDS] : nextSelection
+  function toggleCategory(optionId: FilterOptionId) {
+    filterState.value = toggleCategoryFilter(filterState.value, optionId)
   }
 
   function getProcessedRaces(nowSeconds: number) {
-    return getVisibleRaces(races.value, selectedCategories.value, nowSeconds)
+    return getVisibleRaces(races.value, filterState.value, nowSeconds)
   }
 
   return {
+    activeCategoryIds,
+    activeFiltersLabel,
     error,
     fetchRaces,
+    filterState,
     getProcessedRaces,
     hasRaces,
     lastUpdatedAt,
     loading,
     races,
-    selectedCategories,
     toggleCategory,
   }
 })

@@ -1,9 +1,12 @@
-import type { RaceCategoryId, RaceSummary } from '@/types/race'
+import type { CategoryFilterState, RaceCategoryId, RaceSummary } from '@/types/race'
 import {
+  createAllCategoryFilterState,
   filterExpiredRaces,
   filterRacesByCategory,
+  getActiveFiltersLabel,
   getVisibleRaces,
   isRaceExpired,
+  toggleCategoryFilter,
 } from '@/utils/raceFilters'
 
 function createRace(
@@ -13,16 +16,72 @@ function createRace(
 ): RaceSummary {
   return {
     race_id: `race-${raceNumber}`,
+    race_name: `Race ${raceNumber}`,
     race_number: raceNumber,
     meeting_name: 'Test meeting',
     category_id: categoryId,
     advertised_start: {
       seconds,
     },
+    venue_name: null,
+    venue_country: null,
+    distance: null,
+    distance_unit: null,
+    weather: null,
+    track_condition: null,
+    race_comment: null,
   }
 }
 
 describe('raceFilters', () => {
+  it('defaults to the All filter state', () => {
+    expect(createAllCategoryFilterState()).toEqual({
+      mode: 'all',
+      selectedCategoryIds: [],
+    })
+  })
+
+  it('clicking All clears individual category selections', () => {
+    const currentState: CategoryFilterState = {
+      mode: 'custom',
+      selectedCategoryIds: ['161d9be2-e909-4326-8c2c-35ed71fb460b'],
+    }
+
+    expect(toggleCategoryFilter(currentState, 'all')).toEqual(createAllCategoryFilterState())
+  })
+
+  it('clicking an individual category clears All and selects that category', () => {
+    expect(toggleCategoryFilter(createAllCategoryFilterState(), '161d9be2-e909-4326-8c2c-35ed71fb460b'))
+      .toEqual({
+        mode: 'custom',
+        selectedCategoryIds: ['161d9be2-e909-4326-8c2c-35ed71fb460b'],
+      })
+  })
+
+  it('restores All when all three individual categories become selected', () => {
+    let state = createAllCategoryFilterState()
+    state = toggleCategoryFilter(state, '9daef0d7-bf3c-4f50-921d-8e818c60fe61')
+    state = toggleCategoryFilter(state, '161d9be2-e909-4326-8c2c-35ed71fb460b')
+    state = toggleCategoryFilter(state, '4a2788f8-e825-4d36-9894-efd4baf1cfae')
+
+    expect(state).toEqual(createAllCategoryFilterState())
+  })
+
+  it('restores All when the final individual category is deselected', () => {
+    const currentState: CategoryFilterState = {
+      mode: 'custom',
+      selectedCategoryIds: ['161d9be2-e909-4326-8c2c-35ed71fb460b'],
+    }
+
+    expect(toggleCategoryFilter(currentState, '161d9be2-e909-4326-8c2c-35ed71fb460b')).toEqual(
+      createAllCategoryFilterState(),
+    )
+  })
+
+  it('returns a clear active filters label', () => {
+    expect(getActiveFiltersLabel(createAllCategoryFilterState())).toBe('All Categories')
+  })
+
   it('removes races more than 60 seconds past advertised start', () => {
     const races = [createRace(1, 100), createRace(2, 20), createRace(3, 41)]
 
@@ -56,7 +115,14 @@ describe('raceFilters', () => {
       createRace(6, 350),
     ]
 
-    const result = getVisibleRaces(races, ['4a2788f8-e825-4d36-9894-efd4baf1cfae'], 50)
+    const result = getVisibleRaces(
+      races,
+      {
+        mode: 'custom',
+        selectedCategoryIds: ['4a2788f8-e825-4d36-9894-efd4baf1cfae'],
+      },
+      50,
+    )
 
     expect(result.map((race) => race.race_number)).toEqual([5, 4, 3, 2, 1])
   })

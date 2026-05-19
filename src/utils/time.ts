@@ -1,4 +1,4 @@
-import type { ThemeMode } from '@/types/race'
+import type { CountdownState, ThemeMode } from '@/types/race'
 
 export function getNowInSeconds() {
   return Math.floor(Date.now() / 1000)
@@ -6,25 +6,49 @@ export function getNowInSeconds() {
 
 export function formatCountdown(targetSeconds: number, nowSeconds: number) {
   const difference = targetSeconds - nowSeconds
+  const absoluteDifference = Math.abs(difference)
+  const hours = Math.floor(absoluteDifference / 3600)
+  const minutes = Math.floor((absoluteDifference % 3600) / 60)
+  const seconds = absoluteDifference % 60
 
-  if (difference >= 3600) {
-    const hours = Math.floor(difference / 3600)
-    const minutes = Math.floor((difference % 3600) / 60)
-    return `${hours}h ${String(minutes).padStart(2, '0')}m`
+  if (hours > 0) {
+    return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`
   }
 
-  if (difference >= 60) {
-    const minutes = Math.floor(difference / 60)
-    const seconds = difference % 60
-    return `${minutes}m ${String(seconds).padStart(2, '0')}s`
+  return `${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`
+}
+
+export function classifyCountdownState(targetSeconds: number, nowSeconds: number): CountdownState {
+  const difference = targetSeconds - nowSeconds
+
+  if (difference < 0) {
+    return 'critical-live'
   }
 
-  if (difference >= 0) {
-    return `${difference}s`
+  if (difference < 60) {
+    return 'urgent'
   }
 
-  const startedSecondsAgo = Math.abs(difference)
-  return `Started ${startedSecondsAgo}s ago`
+  if (difference <= 600) {
+    return 'warning'
+  }
+
+  return 'normal'
+}
+
+export function formatRaceStartTime(targetSeconds: number) {
+  return new Intl.DateTimeFormat('en-AU', {
+    hour: 'numeric',
+    minute: '2-digit',
+  }).format(targetSeconds * 1000)
+}
+
+export function formatDistance(distance: number | null, distanceUnit: string | null) {
+  if (!distance) {
+    return null
+  }
+
+  return distanceUnit ? `${distance}${distanceUnit}` : `${distance}`
 }
 
 export function formatLastUpdated(timestamp: number | null) {

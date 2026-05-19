@@ -127,7 +127,7 @@ onUnmounted(() => {
           class="border-b border-app-light-border/70 px-5 py-5 sm:px-7 lg:px-8 dark:border-app-dark-border"
         >
           <CategoryToggle
-            :selected-categories="racesStore.selectedCategories"
+            :filter-state="racesStore.filterState"
             @toggle="racesStore.toggleCategory"
           />
         </section>

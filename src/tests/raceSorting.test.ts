@@ -4,12 +4,20 @@ import { sortRacesByAdvertisedStart } from '@/utils/raceSorting'
 function createRace(raceNumber: number, seconds: number): RaceSummary {
   return {
     race_id: `race-${raceNumber}`,
+    race_name: `Race ${raceNumber}`,
     race_number: raceNumber,
     meeting_name: 'Test meeting',
     category_id: '4a2788f8-e825-4d36-9894-efd4baf1cfae',
     advertised_start: {
       seconds,
     },
+    venue_name: null,
+    venue_country: null,
+    distance: null,
+    distance_unit: null,
+    weather: null,
+    track_condition: null,
+    race_comment: null,
   }
 }
 
