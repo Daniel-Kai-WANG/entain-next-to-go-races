@@ -5,6 +5,7 @@ import {
   FETCH_COUNT_STEP,
   INITIAL_FETCH_COUNT,
   MAX_FETCH_COUNT,
+  MIN_LOADING_DURATION_MS,
   VISIBLE_RACE_COUNT,
 } from '@/constants/raceTiming'
 import {
@@ -19,7 +20,8 @@ import type { CategoryFilterState, FilterOptionId, RaceSummary } from '@/types/r
 export const useRacesStore = defineStore('races', () => {
   const races = ref<RaceSummary[]>([])
   const filterState = ref<CategoryFilterState>(createAllCategoryFilterState())
-  const loading = ref(false)
+  const activeLoadCount = ref(0)
+  const loading = computed(() => activeLoadCount.value > 0)
   const error = ref<string | null>(null)
   const lastUpdatedAt = ref<number | null>(null)
 
@@ -27,8 +29,22 @@ export const useRacesStore = defineStore('races', () => {
   const activeCategoryIds = computed(() => getActiveCategoryIds(filterState.value))
   const activeFiltersLabel = computed(() => getActiveFiltersLabel(filterState.value))
 
+  function waitForMinimumLoadingTime(startedAt: number) {
+    const remainingDuration = MIN_LOADING_DURATION_MS - (Date.now() - startedAt)
+
+    if (remainingDuration <= 0) {
+      return Promise.resolve()
+    }
+
+    return new Promise<void>((resolve) => {
+      setTimeout(resolve, remainingDuration)
+    })
+  }
+
   async function fetchRaces(nowSeconds: number) {
-    loading.value = true
+    const startedAt = Date.now()
+
+    activeLoadCount.value += 1
     error.value = null
 
     try {
@@ -51,7 +67,8 @@ export const useRacesStore = defineStore('races', () => {
       error.value =
         caughtError instanceof Error ? caughtError.message : 'Unable to load race data right now.'
     } finally {
-      loading.value = false
+      await waitForMinimumLoadingTime(startedAt)
+      activeLoadCount.value = Math.max(0, activeLoadCount.value - 1)
     }
   }
 
