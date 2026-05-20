@@ -11,7 +11,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div class="glass-card-strong rounded-[28px] px-6 py-8 text-left">
+  <div class="glass-card-strong light-flat-panel rounded-[28px] border-app-light-bodyBorder shadow-glass-strong-deep px-6 py-8 text-left">
     <span
       class="flex h-14 w-14 items-center justify-center rounded-2xl bg-app-light-danger/10 text-app-light-danger dark:bg-red-400/10 dark:text-red-200"
     >

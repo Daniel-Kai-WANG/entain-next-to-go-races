@@ -8,16 +8,15 @@ const config: Config = {
       colors: {
         app: {
           light: {
-            bg: '#F8F4FF',
-            bgSoft: '#EBD3FF',
-            bgEnd: '#DDCBFF',
+            bg: '#FBF6FF',
+            navBg: '#FDF8FF',         
             card: '#FFFCFF',
             elevated: '#FFFFFF',
             surface: '#F8F1FF',
             cardSelected: '#FCF8FF',
-            primary: '#7A63F5',
-            primaryHover: '#6950EF',
-            primaryStrong: '#5F37F3',
+            primary: '#6B39D4',
+            primaryHover: '#6D4AFF',
+            primaryStrong: '#6B39D4',
             soft: '#CEC2FF',
             softAlt: '#DDCBFF',
             blush: '#E4C5EA',
@@ -27,8 +26,8 @@ const config: Config = {
             borderHover: '#C9BCFF',
             text: '#241B35',
             body: '#645B77',
+            bodyBorder: 'rgba(100, 91, 119, 0.3)',
             muted: '#827A93',
-            success: '#22C55E',
             warning: '#F59E0B',
             danger: '#EF4444',
             critical: '#DC2626',
@@ -56,8 +55,12 @@ const config: Config = {
       },
       boxShadow: {
         glass: '0 22px 60px -28px rgba(111, 86, 220, 0.34), 0 10px 22px -18px rgba(207, 139, 169, 0.18)',
+        'glass-deep':
+          '0 24px 56px -30px rgba(36, 27, 53, 0.28), 0 12px 26px -18px rgba(100, 91, 119, 0.2)',
         'glass-strong':
           '0 26px 80px -30px rgba(111, 86, 220, 0.42), 0 16px 40px -22px rgba(207, 139, 169, 0.24)',
+        'glass-strong-deep':
+          '0 30px 84px -34px rgba(36, 27, 53, 0.34), 0 18px 38px -22px rgba(100, 91, 119, 0.22)',
         'glass-dark':
           '0 30px 70px -32px rgba(10, 10, 20, 0.88), 0 10px 26px -20px rgba(201, 173, 167, 0.18)',
         panel: '0 18px 38px -24px rgba(58, 43, 102, 0.22)',

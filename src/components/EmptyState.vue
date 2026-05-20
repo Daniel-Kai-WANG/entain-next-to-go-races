@@ -3,7 +3,7 @@ import { Inbox } from '@lucide/vue'
 </script>
 
 <template>
-  <div class="glass-card-strong rounded-[28px] px-6 py-8 text-left">
+  <div class="glass-card-strong light-flat-panel rounded-[28px] border-app-light-bodyBorder shadow-glass-strong-deep px-6 py-8 text-left">
     <span
       class="flex h-14 w-14 items-center justify-center rounded-2xl bg-app-light-soft/70 text-app-light-primaryStrong dark:bg-app-dark-surfaceSoft dark:text-app-dark-accent"
     >
