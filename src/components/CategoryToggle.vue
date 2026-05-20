@@ -37,12 +37,12 @@ function getIcon(optionId: FilterOptionId) {
 
 <template>
   <section class="space-y-4">
-    <div class="flex snap-x gap-3 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
+    <div class="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:overflow-visible">
       <button
         v-for="option in FILTER_OPTIONS"
         :key="option.id"
         type="button"
-        class="theme-transition glass-surface inline-flex min-h-12 shrink-0 snap-start items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-light-primary dark:focus-visible:outline-app-dark-accent"
+        class="theme-transition glass-surface inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full px-4 py-3 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-light-primary sm:w-auto sm:shrink-0 sm:justify-start sm:px-5 dark:focus-visible:outline-app-dark-accent"
         :class="
           isActive(option.id)
             ? 'border-app-light-primary bg-app-light-primary [background-image:none] text-white shadow-glass dark:border-app-dark-accent dark:bg-app-dark-accent dark:text-app-dark-bg'
