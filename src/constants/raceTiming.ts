@@ -3,3 +3,6 @@ export const COUNTDOWN_INTERVAL_MS = 1000
 export const RACE_REFRESH_INTERVAL_MS = 30000
 export const REFILL_RETRY_WINDOW_MS = 5000
 export const VISIBLE_RACE_COUNT = 5
+export const INITIAL_FETCH_COUNT = 20
+export const FETCH_COUNT_STEP = 20
+export const MAX_FETCH_COUNT = 80

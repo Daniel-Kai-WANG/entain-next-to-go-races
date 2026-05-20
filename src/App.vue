@@ -55,7 +55,11 @@ const nextRaceLabel = computed(() => {
   return nextRace ? formatCountdown(nextRace.advertised_start.seconds, nowSeconds.value) : '--'
 })
 const helperMessage = computed(() => {
-  if (visibleRaces.value.length > 0 && visibleRaces.value.length < VISIBLE_RACE_COUNT) {
+  if (
+    !racesStore.loading &&
+    visibleRaces.value.length > 0 &&
+    visibleRaces.value.length < VISIBLE_RACE_COUNT
+  ) {
     return 'Fewer than 5 races are currently available for this filter.'
   }
 
@@ -87,11 +91,12 @@ function maybeRefillVisibleRaces() {
 
   if (shouldRefill && !racesStore.loading && hasWaitedLongEnough) {
     lastRefillAttemptAt.value = Date.now()
-    void racesStore.fetchRaces()
+    void racesStore.fetchRaces(nowSeconds.value)
   }
 }
 
 watch(nowSeconds, maybeRefillVisibleRaces)
+watch(() => racesStore.filterState, maybeRefillVisibleRaces, { deep: true })
 
 onMounted(async () => {
   themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
@@ -103,10 +108,10 @@ onMounted(async () => {
   }, COUNTDOWN_INTERVAL_MS)
 
   refreshIntervalId = setInterval(() => {
-    void racesStore.fetchRaces()
+    void racesStore.fetchRaces(nowSeconds.value)
   }, RACE_REFRESH_INTERVAL_MS)
 
-  await racesStore.fetchRaces()
+  await racesStore.fetchRaces(nowSeconds.value)
   maybeRefillVisibleRaces()
 })
 
@@ -124,35 +129,40 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="relative isolate min-h-screen overflow-hidden">
-    <div class="pointer-events-none absolute inset-0 bg-light-glow dark:bg-dark-glow" aria-hidden="true" />
+  <div class="relative isolate min-h-screen overflow-hidden bg-app-light-bg dark:bg-app-dark-bg">
+    <div class="pointer-events-none absolute inset-0 bg-app-light-bg dark:bg-dark-glow" aria-hidden="true" />
     <div
-      class="pointer-events-none absolute inset-x-0 top-0 h-[440px] bg-gradient-to-b from-white/55 via-white/10 to-transparent dark:from-white/5 dark:via-transparent"
+      class="pointer-events-none absolute -left-32 top-12 h-[28rem] w-[28rem] rounded-full bg-transparent blur-[140px] dark:bg-app-dark-accent/8"
       aria-hidden="true"
     />
     <div
-      class="pointer-events-none absolute -left-24 top-20 h-80 w-80 rounded-full bg-app-light-soft/80 blur-[110px] dark:bg-app-dark-accent/10"
+      class="pointer-events-none absolute right-[-5rem] top-24 h-[24rem] w-[24rem] rounded-full bg-transparent blur-[140px] dark:bg-app-dark-surface/32"
       aria-hidden="true"
     />
     <div
-      class="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-app-light-blush/60 blur-[110px] dark:bg-app-dark-surface/40"
-      aria-hidden="true"
-    />
-    <div
-      class="pointer-events-none absolute bottom-0 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-app-light-rose/30 blur-[120px] dark:bg-app-dark-surfaceSoft/45"
+      class="pointer-events-none absolute bottom-[-8rem] left-[18%] h-[24rem] w-[24rem] rounded-full bg-transparent blur-[150px] dark:bg-app-dark-surfaceSoft/32"
       aria-hidden="true"
     />
 
-    <main class="relative mx-auto min-h-screen w-full max-w-[1560px] px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
-      <div class="glass-card-strong theme-transition overflow-hidden rounded-[36px]">
+    <div class="fixed inset-x-0 top-0 z-40">
+      <div class="w-full">
         <AppHeader
           :is-following-system="isFollowingSystem"
           :last-updated-label="lastUpdatedLabel"
           :theme="resolvedTheme"
           @toggle-theme="handleThemeToggle"
         />
+      </div>
+    </div>
 
-        <section class="space-y-6 px-5 py-5 sm:px-7 lg:px-8 lg:py-6">
+    <main
+      class="relative mx-auto min-h-screen w-full max-w-[1920px] px-4 pb-5 pt-28 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 2xl:px-10"
+    >
+      <div class="theme-transition rounded-[36px]">
+
+        <section
+          class="flex flex-col px-5 py-5 gap-8 sm:px-7 lg:px-8 lg:py-6 dark:border-white/8"
+        >
           <StatsOverview
             :active-filters-label="racesStore.activeFiltersLabel"
             :next-race-label="nextRaceLabel"
@@ -168,7 +178,7 @@ onUnmounted(() => {
           :loading="racesStore.loading"
           :now-seconds="nowSeconds"
           :races="visibleRaces"
-          @retry="racesStore.fetchRaces"
+          @retry="() => racesStore.fetchRaces(nowSeconds)"
         />
       </div>
     </main>

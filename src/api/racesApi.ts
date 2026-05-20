@@ -2,7 +2,9 @@ import { isRaceCategoryId } from '@/constants/raceCategories'
 import type { NextRacesApiResponse } from '@/types/api'
 import type { RaceSummary } from '@/types/race'
 
-const NEXT_RACES_ENDPOINT = '/api/racing/?method=nextraces&count=20'
+function getNextRacesEndpoint(count: number) {
+  return `/api/racing/?method=nextraces&count=${count}`
+}
 
 function mapRaceSummaries(response: NextRacesApiResponse) {
   const raceSummaries = response.data?.race_summaries ?? {}
@@ -46,8 +48,11 @@ function mapRaceSummaries(response: NextRacesApiResponse) {
   })
 }
 
-export async function fetchNextRaces(fetchImplementation: typeof fetch = fetch) {
-  const response = await fetchImplementation(NEXT_RACES_ENDPOINT)
+export async function fetchNextRaces(
+  count = 20,
+  fetchImplementation: typeof fetch = fetch,
+) {
+  const response = await fetchImplementation(getNextRacesEndpoint(count))
 
   if (!response.ok) {
     throw new Error(`Failed to load races (${response.status})`)
