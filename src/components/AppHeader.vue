@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { CircleDot } from '@lucide/vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 import type { ThemeMode } from '@/types/race'
 
@@ -16,43 +15,22 @@ const emit = defineEmits<{
 
 <template>
   <header
-    class="theme-transition flex flex-col gap-6 border-b border-app-light-border/70 px-5 py-6 sm:px-7 lg:flex-row lg:items-start lg:justify-between lg:px-8 lg:py-7 dark:border-app-dark-border"
+    class="theme-transition relative flex flex-col gap-6 bg-app-light-navBg px-5 py-4 backdrop-blur-xl shadow-[0_18px_42px_-30px_rgba(124,77,255,0.18),0_10px_24px_-22px_rgba(15,23,42,0.16)] after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:h-px after:bg-[#DCB6D5] after:content-[''] lg:flex-row lg:items-start lg:justify-between dark:bg-[rgb(43_43_71_/_0.84)] dark:shadow-[0_24px_48px_-32px_rgba(0,0,0,0.62),0_12px_28px_-24px_rgba(0,0,0,0.38)] dark:after:bg-white/10"
   >
-    <div class="space-y-2">
+    <div class="space-y-1">
       <h1
         class="font-display text-3xl font-semibold tracking-tight text-app-light-primaryStrong dark:text-app-dark-text"
       >
         Next To Go Races
       </h1>
-      <p class="max-w-xl text-sm text-app-light-body sm:text-base dark:text-app-dark-muted">
+      <p class="max-w-xl text-sm font-semibold text-app-light-body sm:text-base dark:text-app-dark-muted">
         Real-time racing intelligence dashboard
       </p>
     </div>
 
-    <div class="flex flex-col items-start gap-4 lg:items-end">
-      <div class="flex flex-wrap items-center gap-3 sm:gap-4">
-        <div
-          class="glass-surface inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-app-light-body dark:text-app-dark-text"
-        >
-          <CircleDot class="h-4 w-4 text-app-light-success dark:text-app-dark-accent" />
-          <span>LIVE UPDATES: ON</span>
-        </div>
-
-        <div class="text-right">
-          <p class="text-xs uppercase tracking-[0.18em] text-app-light-muted dark:text-app-dark-muted">
-            Last Updated
-          </p>
-          <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
-            {{ lastUpdatedLabel }}
-          </p>
-        </div>
-
-        <ThemeToggle
-          :is-following-system="isFollowingSystem"
-          :theme="theme"
-          @toggle="emit('toggle-theme')"
-        />
-      </div>
-    </div>
+    <ThemeToggle
+      :theme="theme"
+      @toggle="emit('toggle-theme')"
+    />
   </header>
 </template>

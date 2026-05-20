@@ -36,14 +36,16 @@ const timerClassName = computed(() => {
 
 <template>
   <div
-    class="theme-transition inline-flex items-center gap-3 rounded-[22px] border px-4 py-3 shadow-panel"
+    class="theme-transition inline-flex shrink-0 items-center gap-3 rounded-[22px] border px-4 py-3 shadow-panel sm:px-5 sm:py-4"
     :class="timerClassName"
   >
     <div class="text-right">
       <p class="text-[11px] font-semibold uppercase tracking-[0.2em] opacity-80">
         {{ timerLabel }}
       </p>
-      <p class="font-mono text-2xl font-semibold sm:text-3xl">{{ countdownLabel }}</p>
+      <p class="whitespace-nowrap font-mono text-2xl font-semibold tabular-nums lg:text-3xl">
+        {{ countdownLabel }}
+      </p>
     </div>
   </div>
 </template>

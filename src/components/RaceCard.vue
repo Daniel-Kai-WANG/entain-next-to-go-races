@@ -1,5 +1,14 @@
 <script setup lang="ts">
-import { ChevronDown, ChevronUp, PanelRightOpen, PawPrint, Route, Sparkles, Zap } from '@lucide/vue'
+import {
+  ChevronDown,
+  ChevronUp,
+  PanelRightClose,
+  PanelRightOpen,
+  PawPrint,
+  Route,
+  Sparkles,
+  Zap,
+} from '@lucide/vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import CountdownTimer from '@/components/CountdownTimer.vue'
 import { getRaceCategoryMeta } from '@/constants/raceCategories'
@@ -72,10 +81,10 @@ const iconClassName = computed(() => {
 
 const cardClassName = computed(() => {
   if (props.isSelected) {
-    return 'border-app-light-primary bg-app-light-cardSelected shadow-glass-strong dark:border-app-dark-accent dark:bg-app-dark-accentSoft'
+    return 'border-app-light-primary shadow-glass-strong dark:border-app-dark-accent dark:bg-app-dark-accentSoft'
   }
 
-  return 'border-app-light-border/80 hover:border-app-light-borderHover hover:shadow-panel-hover dark:border-app-dark-border dark:hover:border-app-dark-accent/35'
+  return 'border-app-light-bodyBorder hover:border-app-light-borderHover hover:shadow-panel-hover dark:border-app-dark-border dark:hover:border-app-dark-accent/35'
 })
 
 function getCategoryIcon() {
@@ -127,7 +136,7 @@ onUnmounted(() => {
   <button
     ref="rootElement"
     type="button"
-    class="glass-panel theme-transition w-full rounded-[30px] p-5 text-left"
+    class="glass-panel light-flat-panel theme-transition w-full rounded-[30px] p-5 text-left shadow-glass-deep"
     :class="[
       cardClassName,
       useScrollReveal && !hasEnteredViewport
@@ -137,7 +146,7 @@ onUnmounted(() => {
     :aria-expanded="isDesktop ? isSelected : isExpanded"
     @click="handleClick"
   >
-    <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-center">
       <div class="flex items-start gap-4">
         <div
           class="theme-transition flex h-16 w-16 shrink-0 items-center justify-center rounded-[20px]"
@@ -168,30 +177,28 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="flex items-center justify-between gap-4 md:justify-end">
+      <div class="flex items-center justify-between gap-3 sm:gap-4 xl:justify-end">
         <CountdownTimer :now-seconds="nowSeconds" :start-seconds="race.advertised_start.seconds" />
         <span
-          class="theme-transition flex h-11 w-11 items-center justify-center rounded-full border border-app-light-border/70 bg-white/45 text-app-light-primaryStrong dark:border-app-dark-border dark:bg-white/5 dark:text-app-dark-accent"
+          class="icon-action-button"
         >
-          <PanelRightOpen v-if="isDesktop" class="h-5 w-5" />
+          <PanelRightClose v-if="isDesktop && isSelected" class="h-5 w-5" />
+          <PanelRightOpen v-else-if="isDesktop" class="h-5 w-5" />
           <ChevronUp v-else-if="isExpanded" class="h-5 w-5" />
           <ChevronDown v-else class="h-5 w-5" />
         </span>
       </div>
     </div>
 
-    <Transition
-      enter-active-class="theme-transition duration-300"
-      enter-from-class="max-h-0 translate-y-2 opacity-0"
-      enter-to-class="max-h-96 translate-y-0 opacity-100"
-      leave-active-class="theme-transition duration-200"
-      leave-from-class="max-h-96 translate-y-0 opacity-100"
-      leave-to-class="max-h-0 translate-y-2 opacity-0"
+    <div
+      v-if="!isDesktop || isExpanded"
+      class="theme-transition grid"
+      :class="isDesktop ? 'mt-0 grid-rows-[0fr] opacity-0' : isExpanded ? 'mt-5 grid-rows-[1fr] opacity-100 translate-y-0' : 'mt-0 grid-rows-[0fr] opacity-0 -translate-y-1'"
     >
-      <div
-        v-if="!isDesktop && isExpanded"
-        class="mt-5 overflow-hidden rounded-[24px] border border-app-light-border/70 bg-white/40 p-4 dark:border-app-dark-border dark:bg-white/5"
-      >
+      <div class="overflow-hidden">
+        <div
+          class="rounded-[24px] border border-app-light-bodyBorder bg-[#FFFBFA] p-4 dark:border-app-dark-border dark:bg-white/5"
+        >
         <div class="grid gap-3 sm:grid-cols-2">
           <div>
             <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
@@ -234,7 +241,8 @@ onUnmounted(() => {
         >
           {{ race.race_comment }}
         </p>
+        </div>
       </div>
-    </Transition>
+    </div>
   </button>
 </template>
