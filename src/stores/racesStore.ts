@@ -2,6 +2,12 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { fetchNextRaces } from '@/api/racesApi'
 import {
+  FETCH_COUNT_STEP,
+  INITIAL_FETCH_COUNT,
+  MAX_FETCH_COUNT,
+  VISIBLE_RACE_COUNT,
+} from '@/constants/raceTiming'
+import {
   createAllCategoryFilterState,
   getActiveCategoryIds,
   getActiveFiltersLabel,
@@ -21,12 +27,25 @@ export const useRacesStore = defineStore('races', () => {
   const activeCategoryIds = computed(() => getActiveCategoryIds(filterState.value))
   const activeFiltersLabel = computed(() => getActiveFiltersLabel(filterState.value))
 
-  async function fetchRaces() {
+  async function fetchRaces(nowSeconds: number) {
     loading.value = true
     error.value = null
 
     try {
-      races.value = await fetchNextRaces()
+      let nextCount = INITIAL_FETCH_COUNT
+      let nextRaces: RaceSummary[] = []
+
+      while (nextCount <= MAX_FETCH_COUNT) {
+        nextRaces = await fetchNextRaces(nextCount)
+
+        if (getVisibleRaces(nextRaces, filterState.value, nowSeconds).length >= VISIBLE_RACE_COUNT) {
+          break
+        }
+
+        nextCount += FETCH_COUNT_STEP
+      }
+
+      races.value = nextRaces
       lastUpdatedAt.value = Date.now()
     } catch (caughtError) {
       error.value =
