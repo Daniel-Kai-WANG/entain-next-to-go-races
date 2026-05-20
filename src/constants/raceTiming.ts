@@ -6,3 +6,4 @@ export const VISIBLE_RACE_COUNT = 5
 export const INITIAL_FETCH_COUNT = 20
 export const FETCH_COUNT_STEP = 20
 export const MAX_FETCH_COUNT = 80
+export const MIN_LOADING_DURATION_MS = 1500

@@ -85,11 +85,12 @@ function handleSystemThemeChange(event: MediaQueryListEvent) {
 
 function maybeRefillVisibleRaces() {
   const shouldRefill = visibleRaces.value.length < VISIBLE_RACE_COUNT
+  const hasError = racesStore.error !== null
   const hasWaitedLongEnough =
     Date.now() - Math.max(racesStore.lastUpdatedAt ?? 0, lastRefillAttemptAt.value) >=
     REFILL_RETRY_WINDOW_MS
 
-  if (shouldRefill && !racesStore.loading && hasWaitedLongEnough) {
+  if (shouldRefill && !hasError && !racesStore.loading && hasWaitedLongEnough) {
     lastRefillAttemptAt.value = Date.now()
     void racesStore.fetchRaces(nowSeconds.value)
   }
