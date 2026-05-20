@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ListFilter } from '@lucide/vue'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import EmptyState from '@/components/EmptyState.vue'
 import ErrorState from '@/components/ErrorState.vue'
@@ -47,7 +46,7 @@ function handleDesktopModeChange(event: MediaQueryListEvent) {
 }
 
 function handleSelectRace(raceId: string) {
-  selectedRaceId.value = raceId
+  selectedRaceId.value = selectedRaceId.value === raceId ? null : raceId
 }
 
 function handleToggleExpanded(raceId: string) {
@@ -88,23 +87,14 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="space-y-5 px-5 py-5 sm:px-7 sm:py-6 lg:px-8 lg:py-8">
+  <section class="space-y-5 px-5 py-4 sm:px-7 lg:px-8">
     <div
-      class="flex flex-col gap-3 border-b border-app-light-border/60 pb-5 lg:flex-row lg:items-center lg:justify-between dark:border-app-dark-border"
+      v-if="helperMessage"
+      class="flex flex-col gap-3 pb-5 lg:flex-row lg:items-center lg:justify-between dark:border-app-dark-border"
     >
-      <div class="space-y-1">
-        <p class="text-sm font-semibold uppercase tracking-[0.18em] text-app-light-muted dark:text-app-dark-muted">
-          Race Feed
-        </p>
-        <p v-if="helperMessage" class="text-sm text-app-light-body dark:text-app-dark-muted">
-          {{ helperMessage }}
-        </p>
-      </div>
-
-      <div class="inline-flex items-center gap-2 text-sm text-app-light-primaryStrong dark:text-app-dark-accent">
-        <ListFilter class="h-4 w-4" />
-        <span>Sort by Time</span>
-      </div>
+      <p class="text-sm text-app-light-body dark:text-app-dark-muted">
+        {{ helperMessage }}
+      </p>
     </div>
 
     <ErrorState v-if="error && races.length === 0 && !loading" :message="error" @retry="emit('retry')" />
@@ -112,11 +102,8 @@ onUnmounted(() => {
     <EmptyState v-else-if="!loading && races.length === 0" />
 
     <div v-else class="relative">
-      <div
-        class="grid gap-6 theme-transition lg:transition-[grid-template-columns]"
-        :class="showDesktopPanel ? 'lg:grid-cols-[minmax(0,0.78fr)_minmax(360px,1fr)]' : 'lg:grid-cols-1'"
-      >
-        <div class="space-y-4">
+      <div class="race-layout" :class="{ 'race-layout--panel-open': showDesktopPanel }">
+        <div class="race-layout__list space-y-4">
           <div
             v-for="(race, index) in races"
             :key="isDesktop ? `${race.race_id}-${desktopAnimationVersion}` : race.race_id"
@@ -136,21 +123,25 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <Transition
-          enter-active-class="theme-transition duration-500"
-          enter-from-class="translate-x-10 opacity-0"
-          enter-to-class="translate-x-0 opacity-100"
-          leave-active-class="theme-transition duration-300"
-          leave-from-class="translate-x-0 opacity-100"
-          leave-to-class="translate-x-6 opacity-0"
-        >
-          <RaceDetailPanel
-            v-if="showDesktopPanel && selectedRace"
-            :now-seconds="nowSeconds"
-            :race="selectedRace"
-            @close="selectedRaceId = null"
-          />
-        </Transition>
+        <div class="race-layout__panel">
+          <div class="race-layout__panel-inner">
+            <Transition
+              enter-active-class="transition-[opacity,transform] duration-500 ease-out"
+              enter-from-class="translate-x-4 opacity-0"
+              enter-to-class="translate-x-0 opacity-100"
+              leave-active-class="transition-[opacity,transform] duration-300 ease-out"
+              leave-from-class="translate-x-0 opacity-100"
+              leave-to-class="translate-x-2 opacity-0"
+            >
+              <RaceDetailPanel
+                v-if="showDesktopPanel && selectedRace"
+                :now-seconds="nowSeconds"
+                :race="selectedRace"
+                @close="selectedRaceId = null"
+              />
+            </Transition>
+          </div>
+        </div>
       </div>
 
       <Transition
@@ -173,7 +164,7 @@ onUnmounted(() => {
 
       <div
         v-if="error && races.length > 0"
-        class="glass-surface mt-5 rounded-[24px] px-4 py-3 text-sm text-app-light-body dark:text-app-dark-muted"
+        class="glass-surface light-flat-panel mt-5 rounded-[24px] border-app-light-bodyBorder shadow-glass-deep px-4 py-3 text-sm text-app-light-body dark:text-app-dark-muted"
       >
         Showing the latest cached races. {{ error }}
       </div>
