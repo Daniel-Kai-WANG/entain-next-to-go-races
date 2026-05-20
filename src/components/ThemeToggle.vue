@@ -15,7 +15,7 @@ const emit = defineEmits<{
   <div class="flex flex-col items-start lg:items-end">
     <button
       type="button"
-      class="glass-surface theme-transition inline-flex min-h-12 items-center gap-3 rounded-full border-app-light-softAlt px-4 py-2 text-sm font-semibold text-app-light-primaryStrong hover:border-app-light-primaryStrong hover:shadow-panel-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-light-primary dark:text-app-dark-accent dark:hover:border-app-dark-accent/40 dark:hover:shadow-glass-dark"
+      class="theme-transition inline-flex flex-col items-start gap-2 border border-transparent bg-transparent px-0 py-0 text-sm font-semibold text-app-light-primaryStrong shadow-none hover:border-transparent hover:shadow-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-app-light-primary sm:min-h-12 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:border-app-light-softAlt sm:bg-glass-light sm:px-4 sm:py-2 sm:shadow-glass sm:hover:border-app-light-primaryStrong sm:hover:shadow-panel-hover dark:text-app-dark-accent dark:sm:border-white/10 dark:sm:bg-glass-dark dark:sm:shadow-glass-dark dark:sm:hover:border-app-dark-accent/40 dark:sm:hover:shadow-glass-dark"
       :aria-label="`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`"
       @click="emit('toggle')"
     >
@@ -25,7 +25,7 @@ const emit = defineEmits<{
         <Moon v-if="theme === 'light'" class="h-4 w-4" />
         <Sun v-else class="h-4 w-4" />
       </span>
-      <span class="hidden text-left sm:flex sm:flex-col">
+      <span class="hidden text-left sm:inline">
         <span class="leading-tight">{{ theme === 'light' ? 'Light mode' : 'Dark mode' }}</span>
       </span>
     </button>
