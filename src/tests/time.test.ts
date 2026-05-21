@@ -9,6 +9,10 @@ describe('time utilities', () => {
     expect(formatCountdown(190, 60)).toBe('02m 10s')
   })
 
+  it('formats countdowns with hours as hours, minutes and seconds', () => {
+    expect(formatCountdown(3723, 0)).toBe('01h 02m 03s')
+  })
+
   it('formats live races after the advertised start', () => {
     expect(formatCountdown(60, 75)).toBe('00m 15s')
   })
