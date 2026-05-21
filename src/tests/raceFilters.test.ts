@@ -1,9 +1,15 @@
+import {
+  GREYHOUND_CATEGORY_ID,
+  HARNESS_CATEGORY_ID,
+  HORSE_CATEGORY_ID,
+} from '@/constants/raceCategories'
 import type { CategoryFilterState, RaceCategoryId, RaceSummary } from '@/types/race'
 import {
   createAllCategoryFilterState,
   filterExpiredRaces,
   filterRacesByCategory,
   getActiveFiltersLabel,
+  getNextUpcomingRace,
   getVisibleRaces,
   isRaceExpired,
   toggleCategoryFilter,
@@ -12,24 +18,39 @@ import {
 function createRace(
   raceNumber: number,
   seconds: number,
-  categoryId: RaceCategoryId = '4a2788f8-e825-4d36-9894-efd4baf1cfae',
+  categoryId: RaceCategoryId = HORSE_CATEGORY_ID,
 ): RaceSummary {
   return {
     race_id: `race-${raceNumber}`,
     race_name: `Race ${raceNumber}`,
     race_number: raceNumber,
+    meeting_id: null,
     meeting_name: 'Test meeting',
     category_id: categoryId,
     advertised_start: {
       seconds,
     },
+    generated: null,
+    silk_base_url: null,
+    race_comment_alternative: null,
+    venue_id: null,
     venue_name: null,
+    venue_state: null,
     venue_country: null,
     distance: null,
     distance_unit: null,
     weather: null,
     track_condition: null,
     race_comment: null,
+    race_form: {
+      distance: null,
+      distance_type: null,
+      track_condition: null,
+      weather: null,
+      race_comment: null,
+      additional_data_raw: null,
+      revealed_race_info: null,
+    },
   }
 }
 
@@ -44,25 +65,25 @@ describe('raceFilters', () => {
   it('clicking All clears individual category selections', () => {
     const currentState: CategoryFilterState = {
       mode: 'custom',
-      selectedCategoryIds: ['161d9be2-e909-4326-8c2c-35ed71fb460b'],
+      selectedCategoryIds: [HARNESS_CATEGORY_ID],
     }
 
     expect(toggleCategoryFilter(currentState, 'all')).toEqual(createAllCategoryFilterState())
   })
 
   it('clicking an individual category clears All and selects that category', () => {
-    expect(toggleCategoryFilter(createAllCategoryFilterState(), '161d9be2-e909-4326-8c2c-35ed71fb460b'))
+    expect(toggleCategoryFilter(createAllCategoryFilterState(), HARNESS_CATEGORY_ID))
       .toEqual({
         mode: 'custom',
-        selectedCategoryIds: ['161d9be2-e909-4326-8c2c-35ed71fb460b'],
+        selectedCategoryIds: [HARNESS_CATEGORY_ID],
       })
   })
 
   it('restores All when all three individual categories become selected', () => {
     let state = createAllCategoryFilterState()
-    state = toggleCategoryFilter(state, '9daef0d7-bf3c-4f50-921d-8e818c60fe61')
-    state = toggleCategoryFilter(state, '161d9be2-e909-4326-8c2c-35ed71fb460b')
-    state = toggleCategoryFilter(state, '4a2788f8-e825-4d36-9894-efd4baf1cfae')
+    state = toggleCategoryFilter(state, GREYHOUND_CATEGORY_ID)
+    state = toggleCategoryFilter(state, HARNESS_CATEGORY_ID)
+    state = toggleCategoryFilter(state, HORSE_CATEGORY_ID)
 
     expect(state).toEqual(createAllCategoryFilterState())
   })
@@ -70,10 +91,10 @@ describe('raceFilters', () => {
   it('restores All when the final individual category is deselected', () => {
     const currentState: CategoryFilterState = {
       mode: 'custom',
-      selectedCategoryIds: ['161d9be2-e909-4326-8c2c-35ed71fb460b'],
+      selectedCategoryIds: [HARNESS_CATEGORY_ID],
     }
 
-    expect(toggleCategoryFilter(currentState, '161d9be2-e909-4326-8c2c-35ed71fb460b')).toEqual(
+    expect(toggleCategoryFilter(currentState, HARNESS_CATEGORY_ID)).toEqual(
       createAllCategoryFilterState(),
     )
   })
@@ -96,11 +117,11 @@ describe('raceFilters', () => {
 
   it('returns only races from selected categories', () => {
     const races = [
-      createRace(1, 200, '4a2788f8-e825-4d36-9894-efd4baf1cfae'),
-      createRace(2, 210, '161d9be2-e909-4326-8c2c-35ed71fb460b'),
+      createRace(1, 200, HORSE_CATEGORY_ID),
+      createRace(2, 210, HARNESS_CATEGORY_ID),
     ]
 
-    const result = filterRacesByCategory(races, ['161d9be2-e909-4326-8c2c-35ed71fb460b'])
+    const result = filterRacesByCategory(races, [HARNESS_CATEGORY_ID])
 
     expect(result.map((race) => race.race_number)).toEqual([2])
   })
@@ -119,11 +140,21 @@ describe('raceFilters', () => {
       races,
       {
         mode: 'custom',
-        selectedCategoryIds: ['4a2788f8-e825-4d36-9894-efd4baf1cfae'],
+        selectedCategoryIds: [HORSE_CATEGORY_ID],
       },
       50,
     )
 
     expect(result.map((race) => race.race_number)).toEqual([5, 4, 3, 2, 1])
+  })
+
+  it('returns the next race that has not started yet', () => {
+    const result = getNextUpcomingRace([createRace(1, 90), createRace(2, 130)], 100)
+
+    expect(result?.race_number).toBe(2)
+  })
+
+  it('returns null when every visible race is already live', () => {
+    expect(getNextUpcomingRace([createRace(1, 90), createRace(2, 99)], 100)).toBeNull()
   })
 })

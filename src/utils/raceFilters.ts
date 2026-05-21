@@ -78,3 +78,7 @@ export function getVisibleRaces(
     filterRacesByCategory(filterExpiredRaces(races, nowSeconds), getActiveCategoryIds(filterState)),
   ).slice(0, VISIBLE_RACE_COUNT)
 }
+
+export function getNextUpcomingRace(races: RaceSummary[], nowSeconds: number) {
+  return races.find((race) => race.advertised_start.seconds >= nowSeconds) ?? null
+}

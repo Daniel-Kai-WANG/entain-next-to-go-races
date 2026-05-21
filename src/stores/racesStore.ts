@@ -21,7 +21,10 @@ export const useRacesStore = defineStore('races', () => {
   const races = ref<RaceSummary[]>([])
   const filterState = ref<CategoryFilterState>(createAllCategoryFilterState())
   const activeLoadCount = ref(0)
+  const hasLoadedOnce = ref(false)
   const loading = computed(() => activeLoadCount.value > 0)
+  const initialLoading = computed(() => loading.value && !hasLoadedOnce.value)
+  const refreshing = computed(() => loading.value && hasLoadedOnce.value)
   const error = ref<string | null>(null)
   const lastUpdatedAt = ref<number | null>(null)
 
@@ -43,6 +46,7 @@ export const useRacesStore = defineStore('races', () => {
 
   async function fetchRaces(nowSeconds: number) {
     const startedAt = Date.now()
+    const shouldDelayForInitialLoad = !hasLoadedOnce.value
 
     activeLoadCount.value += 1
     error.value = null
@@ -62,12 +66,16 @@ export const useRacesStore = defineStore('races', () => {
       }
 
       races.value = nextRaces
+      hasLoadedOnce.value = true
       lastUpdatedAt.value = Date.now()
     } catch (caughtError) {
       error.value =
         caughtError instanceof Error ? caughtError.message : 'Unable to load race data right now.'
     } finally {
-      await waitForMinimumLoadingTime(startedAt)
+      if (shouldDelayForInitialLoad) {
+        await waitForMinimumLoadingTime(startedAt)
+      }
+
       activeLoadCount.value = Math.max(0, activeLoadCount.value - 1)
     }
   }
@@ -88,9 +96,12 @@ export const useRacesStore = defineStore('races', () => {
     filterState,
     getProcessedRaces,
     hasRaces,
+    hasLoadedOnce,
+    initialLoading,
     lastUpdatedAt,
     loading,
     races,
+    refreshing,
     toggleCategory,
   }
 })

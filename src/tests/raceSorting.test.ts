@@ -1,3 +1,4 @@
+import { HORSE_CATEGORY_ID } from '@/constants/raceCategories'
 import type { RaceSummary } from '@/types/race'
 import { sortRacesByAdvertisedStart } from '@/utils/raceSorting'
 
@@ -6,18 +7,33 @@ function createRace(raceNumber: number, seconds: number): RaceSummary {
     race_id: `race-${raceNumber}`,
     race_name: `Race ${raceNumber}`,
     race_number: raceNumber,
+    meeting_id: null,
     meeting_name: 'Test meeting',
-    category_id: '4a2788f8-e825-4d36-9894-efd4baf1cfae',
+    category_id: HORSE_CATEGORY_ID,
     advertised_start: {
       seconds,
     },
+    generated: null,
+    silk_base_url: null,
+    race_comment_alternative: null,
+    venue_id: null,
     venue_name: null,
+    venue_state: null,
     venue_country: null,
     distance: null,
     distance_unit: null,
     weather: null,
     track_condition: null,
     race_comment: null,
+    race_form: {
+      distance: null,
+      distance_type: null,
+      track_condition: null,
+      weather: null,
+      race_comment: null,
+      additional_data_raw: null,
+      revealed_race_info: null,
+    },
   }
 }
 
