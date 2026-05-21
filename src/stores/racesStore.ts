@@ -32,7 +32,7 @@ export const useRacesStore = defineStore('races', () => {
   const activeCategoryIds = computed(() => getActiveCategoryIds(filterState.value))
   const activeFiltersLabel = computed(() => getActiveFiltersLabel(filterState.value))
 
-  function waitForMinimumLoadingTime(startedAt: number) {
+  const waitForMinimumLoadingTime = (startedAt: number) => {
     const remainingDuration = MIN_LOADING_DURATION_MS - (Date.now() - startedAt)
 
     if (remainingDuration <= 0) {
@@ -44,7 +44,7 @@ export const useRacesStore = defineStore('races', () => {
     })
   }
 
-  async function fetchRaces(nowSeconds: number) {
+  const fetchRaces = async (nowSeconds: number) => {
     const startedAt = Date.now()
     const shouldDelayForInitialLoad = !hasLoadedOnce.value
 
@@ -80,11 +80,11 @@ export const useRacesStore = defineStore('races', () => {
     }
   }
 
-  function toggleCategory(optionId: FilterOptionId) {
+  const toggleCategory = (optionId: FilterOptionId) => {
     filterState.value = toggleCategoryFilter(filterState.value, optionId)
   }
 
-  function getProcessedRaces(nowSeconds: number) {
+  const getProcessedRaces = (nowSeconds: number) => {
     return getVisibleRaces(races.value, filterState.value, nowSeconds)
   }
 

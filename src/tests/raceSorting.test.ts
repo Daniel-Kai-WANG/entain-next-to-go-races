@@ -2,7 +2,7 @@ import { HORSE_CATEGORY_ID } from '@/constants/raceCategories'
 import type { RaceSummary } from '@/types/race'
 import { sortRacesByAdvertisedStart } from '@/utils/raceSorting'
 
-function createRace(raceNumber: number, seconds: number): RaceSummary {
+const createRace = (raceNumber: number, seconds: number): RaceSummary => {
   return {
     race_id: `race-${raceNumber}`,
     race_name: `Race ${raceNumber}`,

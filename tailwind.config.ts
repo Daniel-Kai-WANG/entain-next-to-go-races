@@ -9,9 +9,8 @@ const config: Config = {
         app: {
           light: {
             bg: '#FBF6FF',
-            navBg: '#FDF8FF',         
-            card: '#FFFCFF',
-            elevated: '#FFFFFF',
+            navBg: '#FDF8FF',
+            flatPanel: '#FFFBFA',
             surface: '#F8F1FF',
             cardSelected: '#FCF8FF',
             primary: '#6B39D4',
@@ -19,10 +18,6 @@ const config: Config = {
             primaryStrong: '#6B39D4',
             soft: '#CEC2FF',
             softAlt: '#DDCBFF',
-            thistle: '#EBD3FF',
-            blush: '#E4C5EA',
-            rose: '#DCB6D5',
-            accentWarm: '#CF8BA9',
             palettePeriwinkle: '#CEC2FF',
             palettePeriwinkleSoft: '#DDCBFF',
             paletteThistle: '#EBD3FF',
@@ -35,15 +30,11 @@ const config: Config = {
             body: '#645B77',
             bodyBorder: 'rgba(100, 91, 119, 0.3)',
             muted: '#827A93',
-            warning: '#F59E0B',
             danger: '#EF4444',
             critical: '#DC2626',
-            overlay: 'rgba(255, 252, 255, 0.56)',
           },
           dark: {
             bg: '#22223B',
-            card: '#2B2B47',
-            elevated: '#34344F',
             surface: '#4A4E69',
             surfaceSoft: '#3B3D5C',
             muted: '#9A8C98',
@@ -51,7 +42,6 @@ const config: Config = {
             accentSoft: 'rgba(201, 173, 167, 0.14)',
             text: '#F2E9E4',
             border: 'rgba(242, 233, 228, 0.14)',
-            overlay: 'rgba(43, 43, 71, 0.56)',
           },
         },
       },
@@ -85,9 +75,21 @@ const config: Config = {
         glass: '22px',
         shimmer: '28px',
       },
+      blur: {
+        orb: '140px',
+        'orb-strong': '150px',
+      },
+      fontSize: {
+        'mobile-label': ['13px', { lineHeight: '1.5rem' }],
+        'mobile-value': ['15px', { lineHeight: '1.5rem' }],
+        xxs: ['11px', { lineHeight: '1rem' }],
+      },
+      letterSpacing: {
+        caps: '0.16em',
+        'caps-wide': '0.18em',
+        'caps-widest': '0.2em',
+      },
       backgroundImage: {
-        'light-glow':
-          'radial-gradient(circle at 10% 20%, rgba(206, 194, 255, 0.72), transparent 32%), radial-gradient(circle at 78% 16%, rgba(228, 197, 234, 0.58), transparent 28%), radial-gradient(circle at 70% 74%, rgba(220, 182, 213, 0.34), transparent 32%), linear-gradient(180deg, #faf8ff 0%, #f6f0ff 100%)',
         'dark-glow':
           'radial-gradient(circle at 12% 18%, rgba(201, 173, 167, 0.16), transparent 28%), radial-gradient(circle at 78% 20%, rgba(74, 78, 105, 0.46), transparent 34%), radial-gradient(circle at 65% 72%, rgba(43, 43, 71, 0.48), transparent 36%), linear-gradient(180deg, #23233d 0%, #1f2035 100%)',
         'glass-light':
@@ -100,18 +102,14 @@ const config: Config = {
           '0%, 100%': { opacity: '1', transform: 'scale(1)' },
           '50%': { opacity: '0.88', transform: 'scale(1.01)' },
         },
-        liveCountdownBlink: {
-          '0%, 44%': { opacity: '1', transform: 'scale(1)' },
-          '50%, 100%': { opacity: '0.14', transform: 'scale(0.965)' },
-        },
         liveCountdownGlow: {
           '0%, 100%': {
             boxShadow:
-              '0 0 0 0 rgba(220, 38, 38, 0.00), 0 0 0 1px rgba(239, 68, 68, 0.18)',
+              '0 0 0 0 rgba(220, 38, 38, 0.00), 0 0 0 1px rgba(239, 68, 68, 0.14)',
           },
           '50%': {
             boxShadow:
-              '0 0 0 8px rgba(239, 68, 68, 0.10), 0 0 28px 6px rgba(239, 68, 68, 0.22), 0 0 0 1px rgba(239, 68, 68, 0.28)',
+              '0 0 0 6px rgba(239, 68, 68, 0.08), 0 0 18px 3px rgba(239, 68, 68, 0.14), 0 0 0 1px rgba(239, 68, 68, 0.2)',
           },
         },
         cardEnter: {
@@ -121,9 +119,53 @@ const config: Config = {
       },
       animation: {
         'pulse-soft': 'pulseSoft 1.8s ease-in-out infinite',
-        'live-countdown-blink': 'liveCountdownBlink 0.72s linear infinite',
-        'live-countdown-glow': 'liveCountdownGlow 1.1s ease-in-out infinite',
+        'live-countdown-glow': 'liveCountdownGlow 1.8s ease-in-out infinite',
         'card-enter': 'cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both',
+      },
+      gridTemplateColumns: {
+        'race-card-desktop': 'minmax(0, 1fr) auto',
+      },
+      gridTemplateRows: {
+        collapsed: '0fr',
+        expanded: '1fr',
+      },
+      inset: {
+        'orb-anchor': '18%',
+      },
+      maxWidth: {
+        app: '120rem',
+      },
+      minHeight: {
+        loading: '20rem',
+        'loading-compact': '13.75rem',
+      },
+      opacity: {
+        14: '0.14',
+        16: '0.16',
+        22: '0.22',
+        24: '0.24',
+        26: '0.26',
+        28: '0.28',
+        34: '0.34',
+        38: '0.38',
+        46: '0.46',
+        54: '0.54',
+        90: '0.9',
+      },
+      scale: {
+        'card-collapsed': '0.985',
+      },
+      spacing: {
+        orb: '28rem',
+        overview: 'clamp(1.25rem, 1.9vw, 3rem)',
+      },
+      transitionProperty: {
+        'fade-slide': 'opacity, transform',
+        'panel-expand': 'grid-template-rows, opacity, margin, transform',
+        theme: 'background-color, color',
+        'theme-surface': 'background-color, border-color, box-shadow, color, opacity, backdrop-filter',
+        'theme-surface-transform':
+          'background-color, border-color, color, box-shadow, opacity, backdrop-filter, transform',
       },
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.22, 1, 0.36, 1)',
