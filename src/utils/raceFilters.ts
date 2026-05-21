@@ -27,6 +27,24 @@ export function filterExpiredRaces(races: RaceSummary[], nowSeconds: number) {
   return races.filter((race) => !isRaceExpired(race, nowSeconds))
 }
 
+export function mergeRacesWithRetainedLiveWindow(
+  currentRaces: RaceSummary[],
+  nextRaces: RaceSummary[],
+  nowSeconds: number,
+) {
+  const nextRaceIds = new Set(nextRaces.map((race) => race.race_id))
+  const retainedLiveRaces = currentRaces.filter((race) => {
+    if (nextRaceIds.has(race.race_id)) {
+      return false
+    }
+
+    const hasStarted = race.advertised_start.seconds <= nowSeconds
+    return hasStarted && !isRaceExpired(race, nowSeconds)
+  })
+
+  return [...nextRaces, ...retainedLiveRaces]
+}
+
 export function normalizeCategoryFilterState(
   selectedCategoryIds: RaceCategoryId[],
 ): CategoryFilterState {

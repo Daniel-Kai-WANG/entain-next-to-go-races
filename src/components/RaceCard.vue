@@ -16,7 +16,7 @@ import {
   HARNESS_CATEGORY_ID,
   HORSE_CATEGORY_ID,
 } from '@/constants/raceCategories'
-import { formatDistance, formatRaceStartTime } from '@/utils/time'
+import { formatConditionsLabel, formatDistance, formatRaceStartTime } from '@/utils/time'
 import type { RaceCategoryId, RaceSummary } from '@/types/race'
 
 const props = withDefaults(
@@ -47,6 +47,9 @@ let observer: IntersectionObserver | undefined
 
 const category = computed(() => getRaceCategoryMeta(props.race.category_id))
 const distanceLabel = computed(() => formatDistance(props.race.distance, props.race.distance_unit))
+const conditionsLabel = computed(() =>
+  formatConditionsLabel(props.race.weather, props.race.track_condition),
+)
 const summaryLabel = computed(() => {
   const details = [`Race ${props.race.race_number}`]
 
@@ -234,13 +237,12 @@ onUnmounted(() => {
               {{ distanceLabel }}
             </p>
           </div>
-          <div v-if="race.weather || race.track_condition">
+          <div>
             <p class="text-mobile-label uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Conditions
             </p>
             <p class="mt-1 text-mobile-value font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
-              {{ race.weather ?? 'Pending' }}
-              <span v-if="race.track_condition"> · {{ race.track_condition }}</span>
+              {{ conditionsLabel }}
             </p>
           </div>
         </div>
