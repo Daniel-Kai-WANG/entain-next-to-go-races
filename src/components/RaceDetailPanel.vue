@@ -7,6 +7,7 @@ import {
   Ruler,
   X,
 } from '@lucide/vue'
+import { computed } from 'vue'
 import CountdownTimer from '@/components/CountdownTimer.vue'
 import { getRaceCategoryMeta } from '@/constants/raceCategories'
 import { formatDistance, formatRaceStartTime } from '@/utils/time'
@@ -21,11 +22,11 @@ const emit = defineEmits<{
   close: []
 }>()
 
-const category = getRaceCategoryMeta(props.race.category_id)
+const category = computed(() => getRaceCategoryMeta(props.race.category_id))
 </script>
 
 <template>
-  <aside class="glass-card-strong light-flat-panel theme-transition rounded-[32px] border-app-light-bodyBorder shadow-glass-strong-deep p-6 lg:sticky lg:top-8">
+  <aside class="glass-card-strong light-flat-panel theme-transition overflow-hidden rounded-4xl border-app-light-bodyBorder shadow-glass-strong-deep p-6 lg:sticky lg:top-8">
     <div class="flex items-start justify-between gap-4">
       <div class="space-y-3">
         <span
@@ -54,16 +55,8 @@ const category = getRaceCategoryMeta(props.race.category_id)
       </button>
     </div>
 
-    <div class="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-[24px] border border-app-light-bodyBorder bg-[#FFFBFA] px-5 py-4 dark:border-app-dark-border dark:bg-white/5">
-      <div>
-        <p class="text-xs font-medium uppercase tracking-[0.18em] text-app-light-muted dark:text-app-dark-muted">
-          Live update note
-        </p>
-        <p class="mt-2 text-sm text-app-light-body dark:text-app-dark-muted">
-          This panel updates with the current race ordering and timing state.
-        </p>
-      </div>
-      <CountdownTimer :now-seconds="nowSeconds" :start-seconds="race.advertised_start.seconds" />
+    <div class="mt-6 flex justify-start px-0 py-0">
+      <CountdownTimer align="left" :now-seconds="nowSeconds" :start-seconds="race.advertised_start.seconds" />
     </div>
 
     <div class="mt-6 grid gap-3 sm:grid-cols-2">
@@ -134,7 +127,7 @@ const category = getRaceCategoryMeta(props.race.category_id)
 
     <div
       v-if="race.race_comment"
-      class="theme-transition mt-6 rounded-[24px] border border-app-light-bodyBorder bg-[#FFFBFA] p-5 dark:border-app-dark-border dark:bg-white/5"
+      class="theme-transition mt-6 rounded-3xl border border-app-light-bodyBorder bg-[#FFFBFA] p-5 dark:border-app-dark-border dark:bg-white/5"
     >
       <div class="flex items-center gap-2 text-app-light-primaryStrong dark:text-app-dark-accent">
         <MessageSquareText class="h-5 w-5" />

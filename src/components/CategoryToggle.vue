@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ChessKnight, CircleDot, ListFilter, PawPrint, Route } from '@lucide/vue'
-import { ALL_FILTER_ID, FILTER_OPTIONS } from '@/constants/raceCategories'
+import {
+  ALL_FILTER_ID,
+  FILTER_OPTIONS,
+  GREYHOUND_CATEGORY_ID,
+  HARNESS_CATEGORY_ID,
+  HORSE_CATEGORY_ID,
+} from '@/constants/raceCategories'
 import type { CategoryFilterState, FilterOptionId, RaceCategoryId } from '@/types/race'
 
 const props = defineProps<{
@@ -23,11 +29,11 @@ function getIcon(optionId: FilterOptionId) {
   switch (optionId) {
     case ALL_FILTER_ID:
       return ListFilter
-    case '9daef0d7-bf3c-4f50-921d-8e818c60fe61':
+    case GREYHOUND_CATEGORY_ID:
       return PawPrint
-    case '161d9be2-e909-4326-8c2c-35ed71fb460b':
+    case HARNESS_CATEGORY_ID:
       return Route
-    case '4a2788f8-e825-4d36-9894-efd4baf1cfae':
+    case HORSE_CATEGORY_ID:
       return ChessKnight
     default:
       return CircleDot

@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import {
+  ChessKnight,
   ChevronDown,
-  ChevronUp,
   PanelRightClose,
   PanelRightOpen,
   PawPrint,
   Route,
   Sparkles,
-  Zap,
 } from '@lucide/vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import CountdownTimer from '@/components/CountdownTimer.vue'
 import { getRaceCategoryMeta } from '@/constants/raceCategories'
-import { classifyCountdownState, formatDistance, formatRaceStartTime } from '@/utils/time'
+import { formatDistance, formatRaceStartTime } from '@/utils/time'
 import type { RaceSummary } from '@/types/race'
 
 const props = withDefaults(
@@ -42,9 +41,6 @@ const hasEnteredViewport = ref(!props.useScrollReveal)
 let observer: IntersectionObserver | undefined
 
 const category = getRaceCategoryMeta(props.race.category_id)
-const countdownState = computed(() =>
-  classifyCountdownState(props.race.advertised_start.seconds, props.nowSeconds),
-)
 const distanceLabel = computed(() => formatDistance(props.race.distance, props.race.distance_unit))
 const summaryLabel = computed(() => {
   const details = [`Race ${props.race.race_number}`]
@@ -56,26 +52,14 @@ const summaryLabel = computed(() => {
   return details.join(' • ')
 })
 
-const statusBadge = computed(() => {
-  switch (countdownState.value) {
-    case 'critical-live':
-    case 'urgent':
-      return 'Closing Soon'
-    case 'warning':
-      return 'Approaching'
-    default:
-      return null
-  }
-})
-
 const iconClassName = computed(() => {
   switch (props.race.category_id) {
     case '9daef0d7-bf3c-4f50-921d-8e818c60fe61':
-      return 'bg-red-50 text-app-light-danger dark:bg-red-400/10 dark:text-red-200'
+      return 'bg-app-light-paletteOldRose/30 text-app-light-paletteOldRose dark:bg-app-light-paletteOldRose/22 dark:text-app-light-paletteOldRose'
     case '161d9be2-e909-4326-8c2c-35ed71fb460b':
-      return 'bg-blue-50 text-blue-500 dark:bg-blue-400/10 dark:text-blue-200'
+      return 'bg-app-light-primaryStrong/30 text-app-light-primaryStrong dark:bg-app-light-palettePeriwinkle/24 dark:text-app-light-palettePeriwinkle'
     default:
-      return 'bg-app-light-soft/65 text-app-light-primaryStrong dark:bg-app-dark-surfaceSoft dark:text-app-dark-accent'
+      return 'bg-app-light-palettePinkOrchid/30 text-app-light-palettePinkOrchid dark:bg-app-light-palettePinkOrchid/22 dark:text-app-light-palettePinkOrchid'
   }
 })
 
@@ -94,7 +78,7 @@ function getCategoryIcon() {
     case '161d9be2-e909-4326-8c2c-35ed71fb460b':
       return Route
     case '4a2788f8-e825-4d36-9894-efd4baf1cfae':
-      return Zap
+      return ChessKnight
     default:
       return Sparkles
   }
@@ -136,7 +120,7 @@ onUnmounted(() => {
   <button
     ref="rootElement"
     type="button"
-    class="glass-panel light-flat-panel theme-transition w-full rounded-[30px] p-5 text-left shadow-glass-deep"
+    class="glass-panel light-flat-panel theme-transition w-full rounded-card p-5 text-left shadow-glass-deep"
     :class="[
       cardClassName,
       useScrollReveal && !hasEnteredViewport
@@ -146,58 +130,86 @@ onUnmounted(() => {
     :aria-expanded="isDesktop ? isSelected : isExpanded"
     @click="handleClick"
   >
-    <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-center">
-      <div class="flex items-start gap-4">
-        <div
-          class="theme-transition flex h-16 w-16 shrink-0 items-center justify-center rounded-[20px]"
-          :class="iconClassName"
-        >
-          <component :is="getCategoryIcon()" class="h-7 w-7" />
-        </div>
-
-        <div class="min-w-0">
-          <div class="flex flex-wrap items-center gap-2">
-            <span
-              v-if="statusBadge"
-              class="rounded-full bg-app-light-danger px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-white dark:bg-red-400 dark:text-app-dark-bg"
-            >
-              {{ statusBadge }}
-            </span>
-            <span class="text-sm text-app-light-body dark:text-app-dark-muted">
-              {{ category.shortLabel }}
-            </span>
+    <template v-if="isDesktop">
+      <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-center">
+        <div class="flex items-start gap-4">
+          <div
+            class="theme-transition flex h-16 w-16 shrink-0 items-center justify-center rounded-tile"
+            :class="iconClassName"
+          >
+            <component :is="getCategoryIcon()" class="h-7 w-7" />
           </div>
 
-          <h3 class="mt-2 text-3xl font-semibold text-app-light-text dark:text-app-dark-text">
-            {{ race.meeting_name }}
-          </h3>
-          <p class="mt-1 text-lg text-app-light-body dark:text-app-dark-muted">
-            {{ summaryLabel }}
-          </p>
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-sm text-app-light-body dark:text-app-dark-muted">
+                {{ category.shortLabel }}
+              </span>
+            </div>
+
+            <h3 class="mt-2 text-3xl font-semibold text-app-light-text dark:text-app-dark-text">
+              {{ race.meeting_name }}
+            </h3>
+            <p class="mt-1 text-lg text-app-light-body dark:text-app-dark-muted">
+              {{ summaryLabel }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 sm:gap-4 xl:justify-end">
+          <CountdownTimer :now-seconds="nowSeconds" :start-seconds="race.advertised_start.seconds" />
+          <span class="icon-action-button theme-transition">
+            <PanelRightClose v-if="isSelected" class="h-5 w-5" />
+            <PanelRightOpen v-else class="h-5 w-5" />
+          </span>
         </div>
       </div>
+    </template>
 
-      <div class="flex items-center justify-between gap-3 sm:gap-4 xl:justify-end">
-        <CountdownTimer :now-seconds="nowSeconds" :start-seconds="race.advertised_start.seconds" />
-        <span
-          class="icon-action-button"
-        >
-          <PanelRightClose v-if="isDesktop && isSelected" class="h-5 w-5" />
-          <PanelRightOpen v-else-if="isDesktop" class="h-5 w-5" />
-          <ChevronUp v-else-if="isExpanded" class="h-5 w-5" />
-          <ChevronDown v-else class="h-5 w-5" />
-        </span>
+    <template v-else>
+      <div class="space-y-5">
+        <div class="flex items-start justify-between gap-3">
+          <span
+            class="theme-transition inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
+            :class="iconClassName"
+          >
+            <component :is="getCategoryIcon()" class="h-4 w-4" />
+            {{ category.shortLabel }}
+          </span>
+
+          <CountdownTimer :now-seconds="nowSeconds" :start-seconds="race.advertised_start.seconds" />
+        </div>
+
+        <h3 class="text-3xl font-semibold text-app-light-text dark:text-app-dark-text">
+          {{ race.meeting_name }}
+        </h3>
+
+        <div class="border-t border-app-light-bodyBorder/45 dark:border-app-dark-border" />
+
+        <div class="flex items-center justify-between gap-4">
+          <p class="min-w-0 text-lg text-app-light-body dark:text-app-dark-muted">
+            {{ summaryLabel }}
+          </p>
+
+          <span
+            class="icon-action-button theme-transition shrink-0"
+            :class="isExpanded ? 'rotate-180' : 'rotate-0'"
+          >
+            <ChevronDown class="h-5 w-5" />
+          </span>
+        </div>
       </div>
-    </div>
+    </template>
 
     <div
       v-if="!isDesktop || isExpanded"
-      class="theme-transition grid"
+      class="grid transition-[grid-template-rows,opacity,margin,transform] duration-700 ease-smooth"
       :class="isDesktop ? 'mt-0 grid-rows-[0fr] opacity-0' : isExpanded ? 'mt-5 grid-rows-[1fr] opacity-100 translate-y-0' : 'mt-0 grid-rows-[0fr] opacity-0 -translate-y-1'"
     >
       <div class="overflow-hidden">
         <div
-          class="rounded-[24px] border border-app-light-bodyBorder bg-[#FFFBFA] p-4 dark:border-app-dark-border dark:bg-white/5"
+          class="theme-transition rounded-3xl border border-app-light-bodyBorder bg-[#FFFBFA] p-4 duration-700 ease-smooth dark:border-app-dark-border dark:bg-white/5"
+          :class="!isDesktop && isExpanded ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-[0.985] opacity-0'"
         >
         <div class="grid gap-3 sm:grid-cols-2">
           <div>
