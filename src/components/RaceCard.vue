@@ -211,34 +211,34 @@ onUnmounted(() => {
         >
         <div class="grid gap-3 sm:grid-cols-2">
           <div>
-            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
+            <p class="text-mobile-label uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Advertised Start
             </p>
-            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
+            <p class="mt-1 text-mobile-value font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ formatRaceStartTime(race.advertised_start.seconds) }}
             </p>
           </div>
           <div v-if="race.venue_name">
-            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
+            <p class="text-mobile-label uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Venue
             </p>
-            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
+            <p class="mt-1 text-mobile-value font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ race.venue_name }}
             </p>
           </div>
           <div v-if="distanceLabel">
-            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
+            <p class="text-mobile-label uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Distance
             </p>
-            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
+            <p class="mt-1 text-mobile-value font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ distanceLabel }}
             </p>
           </div>
           <div v-if="race.weather || race.track_condition">
-            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
+            <p class="text-mobile-label uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Conditions
             </p>
-            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
+            <p class="mt-1 text-mobile-value font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ race.weather ?? 'Pending' }}
               <span v-if="race.track_condition"> · {{ race.track_condition }}</span>
             </p>
@@ -249,10 +249,10 @@ onUnmounted(() => {
           v-if="race.race_comment"
           class="mt-4"
         >
-          <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs sm:mb-3 dark:text-app-dark-muted">
+          <p class="text-mobile-label uppercase tracking-caps text-app-light-muted sm:text-xs sm:mb-3 dark:text-app-dark-muted">
             Race Comment
           </p>
-          <p class="mt-1 text-[15px] font-semibold leading-6 text-app-light-text sm:text-sm sm:mt-0 dark:text-app-dark-text">
+          <p class="mt-1 text-mobile-value font-semibold leading-6 text-app-light-text sm:text-sm sm:mt-0 dark:text-app-dark-text">
             {{ race.race_comment }}
           </p>
         </div>

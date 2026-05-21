@@ -80,6 +80,8 @@ const config: Config = {
         'orb-strong': '150px',
       },
       fontSize: {
+        'mobile-label': ['13px', { lineHeight: '1.5rem' }],
+        'mobile-value': ['15px', { lineHeight: '1.5rem' }],
         xxs: ['11px', { lineHeight: '1rem' }],
       },
       letterSpacing: {

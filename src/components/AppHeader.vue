@@ -35,15 +35,15 @@ const highlightedUpdatedToken = computed(() => {
   >
     <div class="min-w-0 flex-1 space-y-1">
       <h1
-        class="font-display text-[2.0625rem] font-semibold tracking-tight text-app-light-primaryStrong sm:text-3xl dark:text-app-dark-text"
+        class="font-display text-3xl font-semibold tracking-tight text-app-light-primaryStrong dark:text-app-dark-text"
       >
         Next To Go Races
       </h1>
       <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <p class="max-w-xl text-[15px] font-semibold text-app-light-body sm:text-base dark:text-app-dark-muted">
+        <p class="max-w-xl text-mobile-value font-semibold text-app-light-body sm:text-base dark:text-app-dark-muted">
           Live race list with category filters and countdowns
         </p>
-        <div class="inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
+        <div class="inline-flex items-center gap-2 text-mobile-label font-semibold uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
           <span
             class="inline-flex items-center gap-1 rounded-full bg-app-light-paletteThistle/46 px-2.5 py-1 text-app-light-muted dark:bg-app-dark-accentSoft dark:text-app-dark-muted"
           >
