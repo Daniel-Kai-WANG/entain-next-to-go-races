@@ -1,9 +1,10 @@
+import { NEXT_RACES_METHOD, RACING_API_PATH } from '@/constants/apiEndpoints'
 import { isRaceCategoryId } from '@/constants/raceCategories'
 import type { ApiRaceSummary, NextRacesApiResponse } from '@/types/api'
 import type { RaceFormDetails, RaceSummary, RevealedRaceInfo } from '@/types/race'
 
 function getNextRacesEndpoint(count: number) {
-  return `/api/racing/?method=nextraces&count=${count}`
+  return `${RACING_API_PATH}?method=${NEXT_RACES_METHOD}&count=${count}`
 }
 
 function getTrimmedValue(value: string | undefined) {
