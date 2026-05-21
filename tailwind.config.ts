@@ -19,9 +19,16 @@ const config: Config = {
             primaryStrong: '#6B39D4',
             soft: '#CEC2FF',
             softAlt: '#DDCBFF',
+            thistle: '#EBD3FF',
             blush: '#E4C5EA',
             rose: '#DCB6D5',
             accentWarm: '#CF8BA9',
+            palettePeriwinkle: '#CEC2FF',
+            palettePeriwinkleSoft: '#DDCBFF',
+            paletteThistle: '#EBD3FF',
+            paletteThistleSoft: '#E4C5EA',
+            palettePinkOrchid: '#DCB6D5',
+            paletteOldRose: '#CF8BA9',
             border: '#E7DAFA',
             borderHover: '#C9BCFF',
             text: '#241B35',
@@ -52,6 +59,14 @@ const config: Config = {
         sans: ['Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
         display: ['Avenir Next', 'Segoe UI', 'system-ui', 'sans-serif'],
         mono: ['SFMono-Regular', 'Consolas', 'ui-monospace', 'monospace'],
+      },
+      borderRadius: {
+        '4xl': '2rem',
+        '5xl': '2.25rem',
+        card: '1.875rem',
+        panel: '1.75rem',
+        timer: '1.375rem',
+        tile: '1.25rem',
       },
       boxShadow: {
         glass: '0 22px 60px -28px rgba(111, 86, 220, 0.34), 0 10px 22px -18px rgba(207, 139, 169, 0.18)',
@@ -85,6 +100,20 @@ const config: Config = {
           '0%, 100%': { opacity: '1', transform: 'scale(1)' },
           '50%': { opacity: '0.88', transform: 'scale(1.01)' },
         },
+        liveCountdownBlink: {
+          '0%, 44%': { opacity: '1', transform: 'scale(1)' },
+          '50%, 100%': { opacity: '0.14', transform: 'scale(0.965)' },
+        },
+        liveCountdownGlow: {
+          '0%, 100%': {
+            boxShadow:
+              '0 0 0 0 rgba(220, 38, 38, 0.00), 0 0 0 1px rgba(239, 68, 68, 0.18)',
+          },
+          '50%': {
+            boxShadow:
+              '0 0 0 8px rgba(239, 68, 68, 0.10), 0 0 28px 6px rgba(239, 68, 68, 0.22), 0 0 0 1px rgba(239, 68, 68, 0.28)',
+          },
+        },
         cardEnter: {
           '0%': { opacity: '0', transform: 'translateY(14px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
@@ -92,6 +121,8 @@ const config: Config = {
       },
       animation: {
         'pulse-soft': 'pulseSoft 1.8s ease-in-out infinite',
+        'live-countdown-blink': 'liveCountdownBlink 0.72s linear infinite',
+        'live-countdown-glow': 'liveCountdownGlow 1.1s ease-in-out infinite',
         'card-enter': 'cardEnter 0.45s cubic-bezier(0.22, 1, 0.36, 1) both',
       },
       transitionTimingFunction: {

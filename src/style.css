@@ -82,7 +82,7 @@
   }
 
   .panel-info-card {
-    @apply theme-transition flex items-center gap-3 rounded-[20px] border border-app-light-bodyBorder px-4 py-3 dark:border-app-dark-border dark:bg-white/5;
+    @apply theme-transition flex items-center gap-3 rounded-tile border border-app-light-bodyBorder px-4 py-3 dark:border-app-dark-border dark:bg-white/5;
     background-color: rgb(255 255 255 / 0.45);
   }
 
@@ -109,7 +109,7 @@
     }
 
     .race-layout__panel {
-      @apply min-w-0 basis-0 overflow-hidden;
+      @apply min-w-0 basis-0 overflow-hidden rounded-4xl;
       width: 0;
       flex: 0 0 0;
       transition:
@@ -123,7 +123,7 @@
     }
 
     .race-layout__panel-inner {
-      @apply min-w-0 opacity-0;
+      @apply min-w-0 opacity-0 rounded-4xl;
       width: min(48vw, 780px);
       transform: translateX(18px) scale(0.995);
       @apply pointer-events-none;

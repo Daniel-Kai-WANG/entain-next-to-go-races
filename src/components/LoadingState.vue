@@ -15,7 +15,7 @@ withDefaults(
 
 <template>
   <div
-    class="glass-card-strong light-flat-panel theme-transition flex flex-col items-center justify-center rounded-[28px] border-app-light-bodyBorder shadow-glass-strong-deep text-center"
+    class="glass-card-strong light-flat-panel theme-transition flex flex-col items-center justify-center rounded-panel border-app-light-bodyBorder shadow-glass-strong-deep text-center"
     :class="compact ? 'min-h-[220px] px-6 py-8' : 'min-h-[320px] px-8 py-12'"
     aria-busy="true"
     aria-live="polite"

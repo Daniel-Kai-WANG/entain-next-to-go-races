@@ -3,7 +3,9 @@ import { computed } from 'vue'
 import { classifyCountdownState, formatCountdown } from '@/utils/time'
 
 const props = defineProps<{
+  align?: 'left' | 'right'
   nowSeconds: number
+  plain?: boolean
   startSeconds: number
 }>()
 
@@ -20,30 +22,55 @@ const timerLabel = computed(() => {
   }
 })
 
-const timerClassName = computed(() => {
+const timerContainerClassName = computed(() => {
+  if (props.plain) {
+    switch (countdownState.value) {
+      case 'critical-live':
+        return 'animate-live-countdown-glow border-app-light-critical/[0.30] bg-app-light-critical/[0.16] text-app-light-critical dark:border-red-300/[0.24] dark:bg-red-400/[0.12] dark:text-red-200'
+      case 'urgent':
+        return 'border-transparent bg-transparent text-app-light-danger dark:text-red-200'
+      case 'warning':
+        return 'border-transparent bg-transparent text-app-light-primaryStrong dark:text-app-dark-accent'
+      default:
+        return 'border-transparent bg-transparent text-app-light-primaryStrong dark:text-app-dark-accent'
+    }
+  }
+
   switch (countdownState.value) {
     case 'critical-live':
-      return 'border-app-light-critical/20 bg-app-light-critical/10 text-app-light-critical dark:border-red-300/25 dark:bg-red-400/10 dark:text-red-200 animate-pulse-soft'
+      return 'animate-live-countdown-glow border-app-light-critical/[0.30] bg-app-light-critical/[0.16] text-app-light-critical dark:border-red-300/[0.24] dark:bg-red-400/[0.12] dark:text-red-200'
     case 'urgent':
-      return 'border-app-light-danger/20 bg-app-light-danger/10 text-app-light-danger dark:border-red-300/20 dark:bg-red-400/10 dark:text-red-200'
+      return 'border-app-light-danger/[0.28] bg-app-light-danger/[0.24] text-app-light-danger dark:border-red-300/[0.24] dark:bg-red-400/[0.14] dark:text-red-200'
     case 'warning':
-      return 'border-app-light-warning/20 bg-amber-50/80 text-app-light-warning dark:border-amber-300/20 dark:bg-amber-300/10 dark:text-amber-200'
+      return 'border-app-light-paletteThistleSoft/[0.90] bg-app-light-paletteThistle/[0.54] text-app-light-primaryStrong dark:border-app-dark-accent/[0.34] dark:bg-app-dark-accentSoft dark:text-app-dark-accent'
     default:
-      return 'border-app-light-primary/15 bg-app-light-soft/45 text-app-light-primaryStrong dark:border-app-dark-accent/25 dark:bg-app-dark-accentSoft dark:text-app-dark-accent'
+      return 'border-app-light-palettePeriwinkleSoft/[0.90] bg-app-light-palettePeriwinkle/[0.54] text-app-light-primaryStrong dark:border-app-dark-accent/[0.34] dark:bg-app-dark-accentSoft dark:text-app-dark-accent'
+  }
+})
+
+const timerValueClassName = computed(() => {
+  switch (countdownState.value) {
+    case 'critical-live':
+      return ''
+    default:
+      return ''
   }
 })
 </script>
 
 <template>
   <div
-    class="theme-transition inline-flex shrink-0 items-center gap-3 rounded-[22px] border px-4 py-3 shadow-panel sm:px-5 sm:py-4"
-    :class="timerClassName"
+    class="theme-transition inline-flex shrink-0 items-center gap-3 rounded-timer border shadow-none"
+    :class="[props.plain ? 'px-0 py-0 sm:px-0 sm:py-0' : 'px-4 py-3 sm:px-5 sm:py-4', timerContainerClassName]"
   >
-    <div class="text-right">
+    <div :class="props.align === 'left' ? 'text-left' : 'text-right'">
       <p class="text-[11px] font-semibold uppercase tracking-[0.2em] opacity-80">
         {{ timerLabel }}
       </p>
-      <p class="whitespace-nowrap font-mono text-2xl font-semibold tabular-nums lg:text-3xl">
+      <p
+        class="whitespace-nowrap font-mono text-2xl font-semibold tabular-nums lg:text-3xl"
+        :class="timerValueClassName"
+      >
         {{ countdownLabel }}
       </p>
     </div>

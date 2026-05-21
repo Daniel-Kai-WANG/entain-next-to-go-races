@@ -12,7 +12,7 @@ export function formatCountdown(targetSeconds: number, nowSeconds: number) {
   const seconds = absoluteDifference % 60
 
   if (hours > 0) {
-    return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m`
+    return `${String(hours).padStart(2, '0')}h ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`
   }
 
   return `${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`

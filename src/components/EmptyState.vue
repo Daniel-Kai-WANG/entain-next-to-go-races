@@ -4,7 +4,7 @@ import { Inbox } from '@lucide/vue'
 
 <template>
   <div
-    class="glass-card-strong light-flat-panel theme-transition flex min-h-[320px] flex-col justify-center gap-4 rounded-[28px] border-app-light-bodyBorder shadow-glass-strong-deep px-6 py-8 text-left"
+    class="glass-card-strong light-flat-panel theme-transition flex min-h-[320px] flex-col justify-center gap-4 rounded-panel border-app-light-bodyBorder shadow-glass-strong-deep px-6 py-8 text-left"
   >
     <span
       class="flex h-14 w-14 items-center justify-center rounded-2xl bg-app-light-soft/70 text-app-light-primaryStrong dark:bg-app-dark-surfaceSoft dark:text-app-dark-accent"
