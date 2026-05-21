@@ -65,7 +65,10 @@ export function getActiveFiltersLabel(filterState: CategoryFilterState) {
     : `${filterState.selectedCategoryIds.length} / ${CATEGORY_COUNT}`
 }
 
-export function filterRacesByCategory(races: RaceSummary[], selectedCategories: RaceCategoryId[]) {
+export function filterRacesByCategory(
+  races: RaceSummary[],
+  selectedCategories: RaceCategoryId[],
+) {
   return races.filter((race) => selectedCategories.includes(race.category_id))
 }
 

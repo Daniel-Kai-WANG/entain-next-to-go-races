@@ -1,3 +1,8 @@
+import { APP_TIME_FORMAT_LOCALE } from '@/constants/app'
+import {
+  URGENT_COUNTDOWN_THRESHOLD_SECONDS,
+  WARNING_COUNTDOWN_THRESHOLD_SECONDS,
+} from '@/constants/raceTiming'
 import type { CountdownState, ThemeMode } from '@/types/race'
 
 export function getNowInSeconds() {
@@ -18,18 +23,21 @@ export function formatCountdown(targetSeconds: number, nowSeconds: number) {
   return `${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`
 }
 
-export function classifyCountdownState(targetSeconds: number, nowSeconds: number): CountdownState {
+export function classifyCountdownState(
+  targetSeconds: number,
+  nowSeconds: number,
+): CountdownState {
   const difference = targetSeconds - nowSeconds
 
   if (difference < 0) {
     return 'critical-live'
   }
 
-  if (difference < 60) {
+  if (difference < URGENT_COUNTDOWN_THRESHOLD_SECONDS) {
     return 'urgent'
   }
 
-  if (difference <= 600) {
+  if (difference <= WARNING_COUNTDOWN_THRESHOLD_SECONDS) {
     return 'warning'
   }
 
@@ -37,7 +45,7 @@ export function classifyCountdownState(targetSeconds: number, nowSeconds: number
 }
 
 export function formatRaceStartTime(targetSeconds: number) {
-  return new Intl.DateTimeFormat('en-AU', {
+  return new Intl.DateTimeFormat(APP_TIME_FORMAT_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
   }).format(targetSeconds * 1000)
@@ -68,7 +76,7 @@ export function formatLastUpdated(timestamp: number | null, currentTimestamp = D
     return `${differenceInMinutes}m ago`
   }
 
-  return new Intl.DateTimeFormat('en-AU', {
+  return new Intl.DateTimeFormat(APP_TIME_FORMAT_LOCALE, {
     hour: 'numeric',
     minute: '2-digit',
   }).format(timestamp)

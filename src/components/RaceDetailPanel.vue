@@ -30,13 +30,13 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
     <div class="flex items-start justify-between gap-4">
       <div class="space-y-3">
         <span
-          class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em]"
+          class="inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-caps-wide"
           :class="category.badgeClass"
         >
           {{ category.shortLabel }}
         </span>
         <div>
-          <p class="text-sm font-medium uppercase tracking-[0.18em] text-app-light-muted dark:text-app-dark-muted">
+          <p class="text-sm font-medium uppercase tracking-caps-wide text-app-light-muted dark:text-app-dark-muted">
             {{ race.meeting_name }} · Race {{ race.race_number }}
           </p>
           <h2 class="mt-2 text-3xl font-semibold text-app-light-text dark:text-app-dark-text">
@@ -65,7 +65,7 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
       >
         <CalendarClock class="h-5 w-5 text-app-light-primaryStrong dark:text-app-dark-accent" />
         <div>
-          <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+          <p class="text-xs uppercase tracking-caps text-app-light-muted dark:text-app-dark-muted">
             Starts at
           </p>
           <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
@@ -79,11 +79,11 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
       >
         <MapPin class="h-5 w-5 text-app-light-primaryStrong dark:text-app-dark-accent" />
         <div>
-          <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+          <p class="text-xs uppercase tracking-caps text-app-light-muted dark:text-app-dark-muted">
             Venue
           </p>
           <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
-            {{ race.venue_name ?? 'Venue pending' }}
+            {{ race.venue_name ?? 'Venue unknown' }}
             <span v-if="race.venue_country" class="font-normal text-app-light-body dark:text-app-dark-muted">
               · {{ race.venue_country }}
             </span>
@@ -97,7 +97,7 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
       >
         <Ruler class="h-5 w-5 text-app-light-primaryStrong dark:text-app-dark-accent" />
         <div>
-          <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+          <p class="text-xs uppercase tracking-caps text-app-light-muted dark:text-app-dark-muted">
             Distance
           </p>
           <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
@@ -112,11 +112,11 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
       >
         <CloudSun class="h-5 w-5 text-app-light-primaryStrong dark:text-app-dark-accent" />
         <div>
-          <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+          <p class="text-xs uppercase tracking-caps text-app-light-muted dark:text-app-dark-muted">
             Conditions
           </p>
           <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
-            {{ race.weather ?? 'Weather pending' }}
+            {{ race.weather ?? 'Weather unknown' }}
             <span v-if="race.track_condition" class="font-normal text-app-light-body dark:text-app-dark-muted">
               · {{ race.track_condition }}
             </span>
@@ -127,11 +127,11 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
 
     <div
       v-if="race.race_comment"
-      class="theme-transition mt-6 rounded-3xl border border-app-light-bodyBorder bg-[#FFFBFA] p-5 dark:border-app-dark-border dark:bg-white/5"
+      class="theme-transition mt-6 rounded-3xl border border-app-light-bodyBorder bg-app-light-flatPanel p-5 dark:border-app-dark-border dark:bg-white/5"
     >
       <div class="flex items-center gap-2 text-app-light-primaryStrong dark:text-app-dark-accent">
         <MessageSquareText class="h-5 w-5" />
-        <h3 class="text-sm font-semibold uppercase tracking-[0.16em]">Race Comment</h3>
+        <h3 class="text-sm font-semibold uppercase tracking-caps">Race Comment</h3>
       </div>
       <p class="mt-3 text-sm leading-7 text-app-light-body dark:text-app-dark-muted">
         {{ race.race_comment }}
