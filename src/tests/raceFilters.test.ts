@@ -15,11 +15,11 @@ import {
   toggleCategoryFilter,
 } from '@/utils/raceFilters'
 
-function createRace(
+const createRace = (
   raceNumber: number,
   seconds: number,
   categoryId: RaceCategoryId = HORSE_CATEGORY_ID,
-): RaceSummary {
+): RaceSummary => {
   return {
     race_id: `race-${raceNumber}`,
     race_name: `Race ${raceNumber}`,

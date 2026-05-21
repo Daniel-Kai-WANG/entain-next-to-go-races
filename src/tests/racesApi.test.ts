@@ -1,5 +1,5 @@
-import { GREYHOUND_CATEGORY_ID, HORSE_CATEGORY_ID } from '@/constants/raceCategories'
 import { fetchNextRaces } from '@/api/racesApi'
+import { GREYHOUND_CATEGORY_ID, HORSE_CATEGORY_ID } from '@/constants/raceCategories'
 
 describe('fetchNextRaces', () => {
   it('maps the full race payload and preserves next_to_go_ids order', async () => {
