@@ -59,6 +59,22 @@ export function formatDistance(distance: number | null, distanceUnit: string | n
   return distanceUnit ? `${distance}${distanceUnit}` : `${distance}`
 }
 
+export function formatConditionsLabel(weather: string | null, trackCondition: string | null) {
+  if (!weather && !trackCondition) {
+    return 'Unknown'
+  }
+
+  if (!weather) {
+    return `Weather unknown · ${trackCondition}`
+  }
+
+  if (!trackCondition) {
+    return `${weather} · Track condition unknown`
+  }
+
+  return `${weather} · ${trackCondition}`
+}
+
 export function formatLastUpdated(timestamp: number | null, currentTimestamp = Date.now()) {
   if (!timestamp) {
     return 'Waiting'

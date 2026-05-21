@@ -12,6 +12,7 @@ import {
   getNextUpcomingRace,
   getVisibleRaces,
   isRaceExpired,
+  mergeRacesWithRetainedLiveWindow,
   toggleCategoryFilter,
 } from '@/utils/raceFilters'
 
@@ -156,5 +157,26 @@ describe('raceFilters', () => {
 
   it('returns null when every visible race is already live', () => {
     expect(getNextUpcomingRace([createRace(1, 90), createRace(2, 99)], 100)).toBeNull()
+  })
+
+  it('retains a live race inside the 60-second window when a refill result no longer includes it', () => {
+    const currentRaces = [
+      createRace(1, 95, HORSE_CATEGORY_ID),
+      createRace(2, 160, HARNESS_CATEGORY_ID),
+    ]
+    const nextRaces = [createRace(2, 160, HARNESS_CATEGORY_ID), createRace(3, 220, HORSE_CATEGORY_ID)]
+
+    const result = mergeRacesWithRetainedLiveWindow(currentRaces, nextRaces, 100)
+
+    expect(result.map((race) => race.race_number)).toEqual([2, 3, 1])
+  })
+
+  it('does not retain a race after it moves beyond the live retention window', () => {
+    const currentRaces = [createRace(1, 39, HORSE_CATEGORY_ID)]
+    const nextRaces = [createRace(2, 220, HARNESS_CATEGORY_ID)]
+
+    const result = mergeRacesWithRetainedLiveWindow(currentRaces, nextRaces, 100)
+
+    expect(result.map((race) => race.race_number)).toEqual([2])
   })
 })

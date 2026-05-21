@@ -12,6 +12,7 @@ import {
   createAllCategoryFilterState,
   getActiveCategoryIds,
   getActiveFiltersLabel,
+  mergeRacesWithRetainedLiveWindow,
   getVisibleRaces,
   toggleCategoryFilter,
 } from '@/utils/raceFilters'
@@ -65,7 +66,7 @@ export const useRacesStore = defineStore('races', () => {
         nextCount += FETCH_COUNT_STEP
       }
 
-      races.value = nextRaces
+      races.value = mergeRacesWithRetainedLiveWindow(races.value, nextRaces, nowSeconds)
       hasLoadedOnce.value = true
       lastUpdatedAt.value = Date.now()
     } catch (caughtError) {

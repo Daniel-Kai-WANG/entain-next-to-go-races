@@ -132,7 +132,7 @@ src/
 
 ### Race Visibility Logic
 
-Visible races are derived from fetched data by removing expired races, applying the active category filters, sorting by `advertised_start.seconds` in ascending order, and taking the first `5`. When fewer than `5` visible races remain for the current filter, the store refetches with larger counts up to `80`, so the app attempts to keep `5` visible races where valid data is available.
+Visible races are derived from fetched data by removing expired races, applying the active category filters, sorting by `advertised_start.seconds` in ascending order, and taking the first `5`. When fewer than `5` visible races remain for the current filter, the store refetches with larger counts up to `80`, so the app attempts to keep `5` visible races where valid data is available. If a race has already started but is still inside the 60-second live retention window, it is preserved locally during refill even if the next API response no longer includes it.
 
 ### Loading Behaviour
 
@@ -207,7 +207,9 @@ These theme tokens and shared surface styles are defined across `tailwind.config
 - If `meeting_name` is missing, the UI shows `Unknown meeting`.
 - If `race_name` is missing, the UI shows `Race {race_number}`.
 - If `venue_name` is missing in the detail panel, the UI shows `Venue unknown`.
-- If `weather` is missing in the detail panel, the UI shows `Weather unknown`.
+- If both weather and track condition are missing, the `Conditions` block still renders and shows `Unknown`.
+- If only `weather` is missing, the `Conditions` block shows `Weather unknown · {track_condition}`.
+- If only `track_condition` is missing, the `Conditions` block shows `{weather} · Track condition unknown`.
 - If the last updated timestamp is not available yet, the header shows `Waiting`.
 
 ## Accessibility and Responsiveness

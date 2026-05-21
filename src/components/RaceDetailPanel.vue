@@ -10,7 +10,7 @@ import {
 import { computed } from 'vue'
 import CountdownTimer from '@/components/CountdownTimer.vue'
 import { getRaceCategoryMeta } from '@/constants/raceCategories'
-import { formatDistance, formatRaceStartTime } from '@/utils/time'
+import { formatConditionsLabel, formatDistance, formatRaceStartTime } from '@/utils/time'
 import type { RaceSummary } from '@/types/race'
 
 const props = defineProps<{
@@ -23,6 +23,9 @@ const emit = defineEmits<{
 }>()
 
 const category = computed(() => getRaceCategoryMeta(props.race.category_id))
+const conditionsLabel = computed(() =>
+  formatConditionsLabel(props.race.weather, props.race.track_condition),
+)
 </script>
 
 <template>
@@ -106,20 +109,14 @@ const category = computed(() => getRaceCategoryMeta(props.race.category_id))
         </div>
       </div>
 
-      <div
-        v-if="race.weather || race.track_condition"
-        class="panel-info-card"
-      >
+      <div class="panel-info-card">
         <CloudSun class="h-5 w-5 text-app-light-primaryStrong dark:text-app-dark-accent" />
         <div>
           <p class="text-xs uppercase tracking-caps text-app-light-muted dark:text-app-dark-muted">
             Conditions
           </p>
           <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
-            {{ race.weather ?? 'Weather unknown' }}
-            <span v-if="race.track_condition" class="font-normal text-app-light-body dark:text-app-dark-muted">
-              · {{ race.track_condition }}
-            </span>
+            {{ conditionsLabel }}
           </p>
         </div>
       </div>
