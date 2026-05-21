@@ -8,6 +8,7 @@ import RaceDetailPanel from '@/components/RaceDetailPanel.vue'
 import type { RaceSummary } from '@/types/race'
 
 const props = defineProps<{
+  blockingLoading?: boolean
   error: string | null
   helperMessage?: string | null
   loading: boolean
@@ -22,7 +23,6 @@ const emit = defineEmits<{
 const isDesktop = ref(false)
 const selectedRaceId = ref<string | null>(null)
 const expandedRaceId = ref<string | null>(null)
-const desktopAnimationVersion = ref(0)
 
 let desktopMediaQuery: MediaQueryList | undefined
 
@@ -69,8 +69,6 @@ watch(
     if (expandedRaceId.value && !props.races.some((race) => race.race_id === expandedRaceId.value)) {
       expandedRaceId.value = null
     }
-
-    desktopAnimationVersion.value += 1
   },
   { immediate: true },
 )
@@ -98,15 +96,23 @@ onUnmounted(() => {
     </div>
 
     <ErrorState v-if="error && races.length === 0 && !loading" :message="error" @retry="emit('retry')" />
-    <LoadingState v-else-if="loading && races.length === 0" />
+    <LoadingState v-else-if="blockingLoading || (loading && races.length === 0)" />
     <EmptyState v-else-if="!loading && races.length === 0" />
 
     <div v-else class="relative">
+      <div
+        v-if="loading && races.length > 0 && !blockingLoading"
+        class="mb-4 inline-flex items-center gap-2 rounded-full border border-app-light-bodyBorder bg-white/70 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-app-light-muted shadow-panel backdrop-blur-glass dark:border-app-dark-border dark:bg-white/5 dark:text-app-dark-muted"
+      >
+        <span class="h-2 w-2 rounded-full bg-app-light-primaryStrong dark:bg-app-dark-accent animate-pulse-soft" />
+        Refreshing races
+      </div>
+
       <div class="race-layout" :class="{ 'race-layout--panel-open': showDesktopPanel }">
         <div class="race-layout__list space-y-4">
           <div
             v-for="(race, index) in races"
-            :key="isDesktop ? `${race.race_id}-${desktopAnimationVersion}` : race.race_id"
+            :key="race.race_id"
             :class="isDesktop ? 'animate-card-enter opacity-0' : ''"
             :style="isDesktop ? { animationDelay: `${index * 70}ms` } : undefined"
           >
@@ -144,27 +150,9 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <Transition
-        enter-active-class="theme-transition duration-300"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="theme-transition duration-200"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <div
-          v-if="loading && races.length > 0"
-          class="absolute inset-0 z-10 flex items-center justify-center rounded-[32px] bg-app-light-overlay backdrop-blur-shimmer dark:bg-app-dark-overlay"
-        >
-          <div class="w-full max-w-md px-4">
-            <LoadingState compact label="Refreshing visible races" />
-          </div>
-        </div>
-      </Transition>
-
       <div
         v-if="error && races.length > 0"
-        class="glass-surface light-flat-panel mt-5 rounded-[24px] border-app-light-bodyBorder shadow-glass-deep px-4 py-3 text-sm text-app-light-body dark:text-app-dark-muted"
+        class="glass-surface light-flat-panel mt-5 rounded-3xl border-app-light-bodyBorder shadow-glass-deep px-4 py-3 text-sm text-app-light-body dark:text-app-dark-muted"
       >
         Showing the latest cached races. {{ error }}
       </div>
