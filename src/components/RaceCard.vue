@@ -10,9 +10,14 @@ import {
 } from '@lucide/vue'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import CountdownTimer from '@/components/CountdownTimer.vue'
-import { getRaceCategoryMeta } from '@/constants/raceCategories'
+import {
+  getRaceCategoryMeta,
+  GREYHOUND_CATEGORY_ID,
+  HARNESS_CATEGORY_ID,
+  HORSE_CATEGORY_ID,
+} from '@/constants/raceCategories'
 import { formatDistance, formatRaceStartTime } from '@/utils/time'
-import type { RaceSummary } from '@/types/race'
+import type { RaceCategoryId, RaceSummary } from '@/types/race'
 
 const props = withDefaults(
   defineProps<{
@@ -40,7 +45,7 @@ const rootElement = ref<HTMLElement | null>(null)
 const hasEnteredViewport = ref(!props.useScrollReveal)
 let observer: IntersectionObserver | undefined
 
-const category = getRaceCategoryMeta(props.race.category_id)
+const category = computed(() => getRaceCategoryMeta(props.race.category_id))
 const distanceLabel = computed(() => formatDistance(props.race.distance, props.race.distance_unit))
 const summaryLabel = computed(() => {
   const details = [`Race ${props.race.race_number}`]
@@ -52,39 +57,32 @@ const summaryLabel = computed(() => {
   return details.join(' • ')
 })
 
-const iconClassName = computed(() => {
-  switch (props.race.category_id) {
-    case '9daef0d7-bf3c-4f50-921d-8e818c60fe61':
-      return 'bg-app-light-paletteOldRose/30 text-app-light-paletteOldRose dark:bg-app-light-paletteOldRose/22 dark:text-app-light-paletteOldRose'
-    case '161d9be2-e909-4326-8c2c-35ed71fb460b':
-      return 'bg-app-light-primaryStrong/30 text-app-light-primaryStrong dark:bg-app-light-palettePeriwinkle/24 dark:text-app-light-palettePeriwinkle'
-    default:
-      return 'bg-app-light-palettePinkOrchid/30 text-app-light-palettePinkOrchid dark:bg-app-light-palettePinkOrchid/22 dark:text-app-light-palettePinkOrchid'
-  }
-})
-
 const cardClassName = computed(() => {
   if (props.isSelected) {
-    return 'border-app-light-primary shadow-glass-strong dark:border-app-dark-accent dark:bg-app-dark-accentSoft'
+    return 'border-app-light-primary bg-app-light-cardSelected shadow-glass-strong dark:border-app-dark-accent dark:bg-app-dark-accentSoft'
   }
 
   return 'border-app-light-bodyBorder hover:border-app-light-borderHover hover:shadow-panel-hover dark:border-app-dark-border dark:hover:border-app-dark-accent/35'
 })
 
-function getCategoryIcon() {
+const categoryIconMap: Record<RaceCategoryId, typeof PawPrint> = {
+  [GREYHOUND_CATEGORY_ID]: PawPrint,
+  [HARNESS_CATEGORY_ID]: Route,
+  [HORSE_CATEGORY_ID]: ChessKnight,
+}
+
+const getCategoryIcon = () => {
   switch (props.race.category_id) {
-    case '9daef0d7-bf3c-4f50-921d-8e818c60fe61':
-      return PawPrint
-    case '161d9be2-e909-4326-8c2c-35ed71fb460b':
-      return Route
-    case '4a2788f8-e825-4d36-9894-efd4baf1cfae':
-      return ChessKnight
+    case GREYHOUND_CATEGORY_ID:
+    case HARNESS_CATEGORY_ID:
+    case HORSE_CATEGORY_ID:
+      return categoryIconMap[props.race.category_id]
     default:
       return Sparkles
   }
 }
 
-function handleClick() {
+const handleClick = () => {
   if (props.isDesktop) {
     emit('select')
     return
@@ -131,11 +129,11 @@ onUnmounted(() => {
     @click="handleClick"
   >
     <template v-if="isDesktop">
-      <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-center">
+      <div class="grid gap-4 xl:grid-cols-race-card-desktop xl:items-center">
         <div class="flex items-start gap-4">
           <div
             class="theme-transition flex h-16 w-16 shrink-0 items-center justify-center rounded-tile"
-            :class="iconClassName"
+            :class="category.iconClass"
           >
             <component :is="getCategoryIcon()" class="h-7 w-7" />
           </div>
@@ -171,7 +169,7 @@ onUnmounted(() => {
         <div class="flex items-start justify-between gap-3">
           <span
             class="theme-transition inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold"
-            :class="iconClassName"
+            :class="category.iconClass"
           >
             <component :is="getCategoryIcon()" class="h-4 w-4" />
             {{ category.shortLabel }}
@@ -203,56 +201,61 @@ onUnmounted(() => {
 
     <div
       v-if="!isDesktop || isExpanded"
-      class="grid transition-[grid-template-rows,opacity,margin,transform] duration-700 ease-smooth"
-      :class="isDesktop ? 'mt-0 grid-rows-[0fr] opacity-0' : isExpanded ? 'mt-5 grid-rows-[1fr] opacity-100 translate-y-0' : 'mt-0 grid-rows-[0fr] opacity-0 -translate-y-1'"
+      class="grid transition-panel-expand duration-700 ease-smooth"
+      :class="isDesktop ? 'mt-0 grid-rows-collapsed opacity-0' : isExpanded ? 'mt-5 grid-rows-expanded opacity-100 translate-y-0' : 'mt-0 grid-rows-collapsed opacity-0 -translate-y-1'"
     >
       <div class="overflow-hidden">
         <div
-          class="theme-transition rounded-3xl border border-app-light-bodyBorder bg-[#FFFBFA] p-4 duration-700 ease-smooth dark:border-app-dark-border dark:bg-white/5"
-          :class="!isDesktop && isExpanded ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-[0.985] opacity-0'"
+          class="theme-transition rounded-3xl border border-app-light-bodyBorder bg-app-light-flatPanel p-4 duration-700 ease-smooth dark:border-app-dark-border dark:bg-white/5"
+          :class="!isDesktop && isExpanded ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-2 scale-card-collapsed opacity-0'"
         >
         <div class="grid gap-3 sm:grid-cols-2">
           <div>
-            <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Advertised Start
             </p>
-            <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
+            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ formatRaceStartTime(race.advertised_start.seconds) }}
             </p>
           </div>
           <div v-if="race.venue_name">
-            <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Venue
             </p>
-            <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
+            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ race.venue_name }}
             </p>
           </div>
           <div v-if="distanceLabel">
-            <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Distance
             </p>
-            <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
+            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ distanceLabel }}
             </p>
           </div>
           <div v-if="race.weather || race.track_condition">
-            <p class="text-xs uppercase tracking-[0.16em] text-app-light-muted dark:text-app-dark-muted">
+            <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs dark:text-app-dark-muted">
               Conditions
             </p>
-            <p class="mt-1 text-sm font-semibold text-app-light-text dark:text-app-dark-text">
+            <p class="mt-1 text-[15px] font-semibold text-app-light-text sm:text-sm dark:text-app-dark-text">
               {{ race.weather ?? 'Pending' }}
               <span v-if="race.track_condition"> · {{ race.track_condition }}</span>
             </p>
           </div>
         </div>
 
-        <p
+        <div
           v-if="race.race_comment"
-          class="mt-4 text-sm leading-6 text-app-light-body dark:text-app-dark-muted"
+          class="mt-4"
         >
-          {{ race.race_comment }}
-        </p>
+          <p class="text-[13px] uppercase tracking-caps text-app-light-muted sm:text-xs sm:mb-3 dark:text-app-dark-muted">
+            Race Comment
+          </p>
+          <p class="mt-1 text-[15px] font-semibold leading-6 text-app-light-text sm:text-sm sm:mt-0 dark:text-app-dark-text">
+            {{ race.race_comment }}
+          </p>
+        </div>
         </div>
       </div>
     </div>
