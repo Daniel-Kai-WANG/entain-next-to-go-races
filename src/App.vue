@@ -24,6 +24,7 @@ import {
   getNowInSeconds,
   nextThemeMode,
 } from '@/utils/time'
+import { getNextUpcomingRace } from '@/utils/raceFilters'
 import type { ThemeMode } from '@/types/race'
 
 const racesStore = useRacesStore()
@@ -32,6 +33,7 @@ const nowSeconds = ref(getNowInSeconds())
 const resolvedTheme = ref<ThemeMode>('light')
 const storedThemePreference = ref<ThemeMode | null>(getStoredThemePreference())
 const lastRefillAttemptAt = ref(0)
+const blockingRefillPending = ref(false)
 
 let countdownIntervalId: ReturnType<typeof setInterval> | undefined
 let refreshIntervalId: ReturnType<typeof setInterval> | undefined
@@ -50,10 +52,23 @@ const startingSoonCount = computed(
     ).length,
 )
 const nextRaceLabel = computed(() => {
-  const [nextRace] = visibleRaces.value
+  const nextRace = getNextUpcomingRace(visibleRaces.value, nowSeconds.value)
 
   return nextRace ? formatCountdown(nextRace.advertised_start.seconds, nowSeconds.value) : '--'
 })
+const nextRaceState = computed(() => {
+  const nextRace = getNextUpcomingRace(visibleRaces.value, nowSeconds.value)
+
+  return nextRace
+    ? classifyCountdownState(nextRace.advertised_start.seconds, nowSeconds.value)
+    : null
+})
+const blockingLoading = computed(
+  () =>
+    racesStore.initialLoading ||
+    blockingRefillPending.value ||
+    (racesStore.loading && visibleRaces.value.length < VISIBLE_RACE_COUNT),
+)
 const helperMessage = computed(() => {
   if (
     !racesStore.loading &&
@@ -92,7 +107,10 @@ function maybeRefillVisibleRaces() {
 
   if (shouldRefill && !hasError && !racesStore.loading && hasWaitedLongEnough) {
     lastRefillAttemptAt.value = Date.now()
-    void racesStore.fetchRaces(nowSeconds.value)
+    blockingRefillPending.value = true
+    void racesStore.fetchRaces(nowSeconds.value).finally(() => {
+      blockingRefillPending.value = false
+    })
   }
 }
 
@@ -148,6 +166,7 @@ onUnmounted(() => {
     <div class="fixed inset-x-0 top-0 z-40">
       <div class="w-full">
         <AppHeader
+          :is-refreshing="racesStore.refreshing"
           :is-following-system="isFollowingSystem"
           :last-updated-label="lastUpdatedLabel"
           :theme="resolvedTheme"
@@ -159,7 +178,7 @@ onUnmounted(() => {
     <main
       class="relative mx-auto min-h-screen w-full max-w-[1920px] px-4 pb-5 pt-28 sm:px-6 sm:pb-6 lg:px-8 lg:pb-8 2xl:px-10"
     >
-      <div class="theme-transition rounded-[36px]">
+      <div class="theme-transition rounded-5xl">
 
         <section
           class="flex flex-col px-5 py-5 gap-8 sm:px-7 lg:px-8 lg:py-6 dark:border-white/8"
@@ -167,6 +186,7 @@ onUnmounted(() => {
           <StatsOverview
             :active-filters-label="racesStore.activeFiltersLabel"
             :next-race-label="nextRaceLabel"
+            :next-race-state="nextRaceState"
             :starting-soon-count="startingSoonCount"
           />
 
@@ -174,6 +194,7 @@ onUnmounted(() => {
         </section>
 
         <RaceList
+          :blocking-loading="blockingLoading"
           :error="racesStore.error"
           :helper-message="helperMessage"
           :loading="racesStore.loading"
