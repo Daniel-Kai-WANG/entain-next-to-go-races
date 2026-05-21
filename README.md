@@ -96,6 +96,8 @@ Current test coverage includes:
 - next upcoming race selection
 - countdown formatting
 - countdown state classification
+- keeping visible races rendered during background refill
+- stale request protection during overlapping fetches
 - API response mapping, trimming, fallback values, and response ordering
 
 ## Available Scripts
@@ -138,8 +140,8 @@ Visible races are derived from fetched data by removing expired races, applying 
 
 The UI uses two loading patterns:
 
-- Initial and refill loading uses a blocking loading panel during the first load, and again when the current filtered result falls below `5` visible races while the app is refetching more data. This avoids briefly showing an incomplete race list during refill.
-- Background refresh uses a small non-blocking loading state in the header. The updated timestamp is replaced with an icon-based `Loading` indicator while loading or refresh is in progress. The header loading state is kept visible for at least `1500ms` so the status change is noticeable rather than flashing briefly.
+- Initial load uses a blocking loading panel until the first dataset has loaded. The same panel is also used when a request is in flight and the active filter currently has no visible races.
+- Subsequent refresh and refill requests otherwise use a non-blocking loading state in the header, so already visible races stay on screen while the app fetches more data in the background. The updated timestamp is replaced with an icon-based `Loading` indicator while loading or refresh is in progress, and the header loading state is kept visible for at least `1500ms` so the status change is noticeable rather than flashing briefly.
 
 ### Countdown Behaviour
 
@@ -168,6 +170,7 @@ Filters can be combined. If the final specific category is deselected, the UI re
 - loading, initial loading, and refresh states
 - error state
 - last updated timestamp
+- cancellation and stale-response protection for overlapping requests
 - fetch-and-refill logic for keeping the visible list populated
 
 ### Stats Overview

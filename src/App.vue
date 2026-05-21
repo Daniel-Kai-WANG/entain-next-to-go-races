@@ -35,7 +35,6 @@ const nowSeconds = ref(getNowInSeconds())
 const resolvedTheme = ref<ThemeMode>('light')
 const storedThemePreference = ref<ThemeMode | null>(getStoredThemePreference())
 const lastRefillAttemptAt = ref(0)
-const blockingRefillPending = ref(false)
 const headerStatusLabel = ref<'Loading' | null>(null)
 const headerStatusVisibleUntil = ref(0)
 
@@ -68,12 +67,7 @@ const nextRaceState = computed(() => {
     ? classifyCountdownState(nextRace.advertised_start.seconds, nowSeconds.value)
     : null
 })
-const blockingLoading = computed(
-  () =>
-    racesStore.initialLoading ||
-    blockingRefillPending.value ||
-    (racesStore.loading && visibleRaces.value.length < VISIBLE_RACE_COUNT),
-)
+const blockingLoading = computed(() => racesStore.initialLoading)
 const helperMessage = computed(() => {
   if (
     !racesStore.loading &&
@@ -138,10 +132,7 @@ const maybeRefillVisibleRaces = (force = false) => {
 
   if (shouldRefill && !hasError && !racesStore.loading && (force || hasWaitedLongEnough)) {
     lastRefillAttemptAt.value = Date.now()
-    blockingRefillPending.value = true
-    void racesStore.fetchRaces(nowSeconds.value).finally(() => {
-      blockingRefillPending.value = false
-    })
+    void racesStore.fetchRaces(nowSeconds.value)
   }
 }
 

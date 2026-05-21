@@ -161,8 +161,9 @@ function mapRaceSummaries(response: NextRacesApiResponse) {
 export async function fetchNextRaces(
   count = 20,
   fetchImplementation: typeof fetch = fetch,
+  signal?: AbortSignal,
 ) {
-  const response = await fetchImplementation(getNextRacesEndpoint(count))
+  const response = await fetchImplementation(getNextRacesEndpoint(count), { signal })
 
   if (!response.ok) {
     throw new Error(`Failed to load races (${response.status})`)
